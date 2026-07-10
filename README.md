@@ -82,6 +82,25 @@ Mở trình duyệt và truy cập: `http://localhost:8000` để xem kết qu�
 
 ---
 
+## 📸 Giao diện các màn hình
+
+### 1. Trang chủ (Home Page)
+![Giao diện Trang chủ](assets/images/screenshots/home.png)
+
+### 2. Giới thiệu (About Page)
+![Giao diện Giới thiệu](assets/images/screenshots/about.png)
+
+### 3. Tuyển thành viên (Recruitment Page)
+![Giao diện Tuyển thành viên](assets/images/screenshots/recruitment.png)
+
+### 4. Liên hệ (Contact Page)
+![Giao diện Liên hệ](assets/images/screenshots/contact.png)
+
+### 5. Quản trị Giao diện (Admin Settings)
+![Giao diện Trang quản trị](assets/images/screenshots/admin_settings.png)
+
+---
+
 ## ⚡ Các giải pháp tối ưu hiệu năng đã triển khai
 
 Website được áp dụng các cơ chế tối ưu giúp giảm tải CPU, RAM và tối đa hóa dung lượng trống:
