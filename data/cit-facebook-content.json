@@ -1,0 +1,275 @@
+{
+  "source_policy": "Only public Facebook fanpage data was used. The old/main website was intentionally ignored.",
+  "sources": {
+    "fanpage": "https://www.facebook.com/clbcongnghe.cit",
+    "photos": "https://www.facebook.com/clbcongnghe.cit/photos",
+    "albums": "https://www.facebook.com/clbcongnghe.cit/photos_albums",
+    "featured_post": "https://www.facebook.com/clbcongnghe.cit/posts/pfbid02K9bny8niwvS62K4QRDoyBXzF5YBxNLjM72SuzpFsabSoGgQaK2VbvQaZxWkt4Firl"
+  },
+  "club": {
+    "name": "CIT - Câu lạc bộ Công nghệ Trường Đại học Thương mại",
+    "short_name": "CIT",
+    "description": "CLB về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại và dưới sự quản lý của Khoa Công nghệ số ứng dụng.",
+    "followers_text": "2.2K followers",
+    "address": "Phòng 401 - Tòa G - Trường Đại học Thương mại",
+    "email": "clbcongnghecit@gmail.com",
+    "tiktok": "https://www.tiktok.com/@cit.tmu",
+    "hotline": "038 402 3607 (Trần Nam Hải - Chủ nhiệm CLB)"
+  },
+  "activities": [
+    {
+      "title": "AETERNUM - Lễ kỉ niệm 2 năm thành lập CIT",
+      "date_text": "Album công khai Facebook",
+      "category": "Kỉ niệm thành lập",
+      "source": "https://www.facebook.com/media/set/?set=a.894172303695356&type=3",
+      "summary": "Album AETERNUM ghi nhận chuỗi nội dung hướng tới lễ kỉ niệm 2 năm thành lập CIT. Trong album có ảnh xác nhận hoạt động/cuộc thi nội bộ HackerRank hướng tới kỉ niệm 2 năm thành lập CIT và ảnh công bố kết quả cuộc thi.",
+      "website_angle": "Dùng cho mục Hoạt động nổi bật: thể hiện hành trình phát triển 2 năm, hoạt động chuyên môn và tinh thần thi đua công nghệ của CLB.",
+      "local_images": [
+        "assets/images/cit/albums/aeternum-hackerrank.jpg"
+      ],
+      "facebook_public_evidence": [
+        "Album title: AETERNUM- LỄ KỈ NIỆM 2 NĂM THÀNH LẬP CIT",
+        "Album metadata: 11 posts, 30 items, Shared with Public",
+        "Ảnh trong album có chữ: CUỘC THI NỘI BỘ HACKERANK HƯỚNG TỚI KỈ NIỆM 2 NĂM THÀNH LẬP CIT",
+        "Ảnh trong album có chữ: CÔNG BỐ KẾT QUẢ CUỘC THI NỘI BỘ"
+      ]
+    },
+    {
+      "title": "Vinh danh CIT",
+      "date_text": "Album công khai Facebook",
+      "category": "Vinh danh thành viên",
+      "source": "https://www.facebook.com/media/set/?set=a.488621737583750&type=3",
+      "summary": "Album Vinh danh CIT tập hợp nội dung ghi nhận, giới thiệu hoặc vinh danh các thành viên/đóng góp trong CLB.",
+      "website_angle": "Dùng cho mục Thành viên tiêu biểu hoặc Câu chuyện CIT: nhấn mạnh văn hóa ghi nhận đóng góp và phát triển con người.",
+      "local_images": [
+        "assets/images/cit/albums/vinh-danh-cit.jpg"
+      ],
+      "facebook_public_evidence": [
+        "Album title: Vinh danh CIT",
+        "Album metadata: 13 posts, 142 items, Shared with Public"
+      ]
+    },
+    {
+      "title": "HTTT",
+      "date_text": "Album công khai Facebook",
+      "category": "Chuyên môn / học thuật",
+      "source": "https://www.facebook.com/media/set/?set=a.408220595623865&type=3",
+      "summary": "Album HTTT là nhóm ảnh/nội dung liên quan đến mảng hệ thống thông tin hoặc hoạt động học thuật/chuyên môn của CIT.",
+      "website_angle": "Dùng cho mục Chuyên môn: thể hiện CLB có các nội dung học thuật gắn với công nghệ và hệ thống thông tin.",
+      "local_images": [
+        "assets/images/cit/albums/httt.jpg"
+      ],
+      "facebook_public_evidence": [
+        "Album title: HTTT",
+        "Album metadata: 26 posts, 28 items, Shared with Public"
+      ]
+    },
+    {
+      "title": "BIRTHDAY WITH CIT",
+      "date_text": "Album công khai Facebook",
+      "category": "Gắn kết nội bộ",
+      "source": "https://www.facebook.com/media/set/?set=a.465636063215651&type=3",
+      "summary": "Album Birthday With CIT ghi lại các bài/ảnh chúc mừng sinh nhật thành viên, thể hiện văn hóa quan tâm và gắn kết nội bộ.",
+      "website_angle": "Dùng cho mục Đời sống CLB: tạo cảm giác thân thiện, gần gũi và có cộng đồng sinh viên năng động.",
+      "local_images": [
+        "assets/images/cit/albums/birthday-with-cit.jpg"
+      ],
+      "facebook_public_evidence": [
+        "Album title: BIRTHDAY WITH CIT",
+        "Album metadata: 28 posts, 61 items, Shared with Public"
+      ]
+    },
+    {
+      "title": "Chúc mừng các tân cử nhân",
+      "date_text": "28 June at 20:20",
+      "category": "Vinh danh thành viên",
+      "source": "https://www.facebook.com/clbcongnghe.cit/posts/pfbid02K9bny8niwvS62K4QRDoyBXzF5YBxNLjM72SuzpFsabSoGgQaK2VbvQaZxWkt4Firl",
+      "summary": "CIT gửi lời chúc mừng tới các anh chị tốt nghiệp cử nhân, tri ân những đóng góp trong quá trình xây dựng câu lạc bộ và lan tỏa tinh thần đoàn kết, học hỏi, phát triển.",
+      "website_angle": "Dùng cho mục Hoạt động nổi bật hoặc Câu chuyện thành viên: nhấn mạnh truyền thống kế thừa, vinh danh thế hệ đi trước và cảm hứng cho thành viên mới.",
+      "hashtags": [
+        "CIT_TMU",
+        "Graduation2026"
+      ],
+      "local_images": [
+        "assets/images/cit/tan-cu-nhan-01.jpg",
+        "assets/images/cit/tan-cu-nhan-02.jpg",
+        "assets/images/cit/tan-cu-nhan-03.jpg",
+        "assets/images/cit/tan-cu-nhan-04.jpg",
+        "assets/images/cit/tan-cu-nhan-05.jpg"
+      ]
+    }
+  ],
+  "facebook_public_albums": [
+    {
+      "title": "Photos",
+      "items": "634 items",
+      "source": "https://www.facebook.com/media/set/?set=a.116235354822392&type=3"
+    },
+    {
+      "title": "Cover photos",
+      "items": "13 items",
+      "source": "https://www.facebook.com/media/set/?set=a.112341841878410&type=3"
+    },
+    {
+      "title": "Profile pictures",
+      "items": "11 items",
+      "source": "https://www.facebook.com/media/set/?set=a.110340562078538&type=3"
+    },
+    {
+      "title": "AETERNUM - Lễ kỉ niệm 2 năm thành lập CIT",
+      "items": "30 items",
+      "source": "https://www.facebook.com/media/set/?set=a.894172303695356&type=3"
+    },
+    {
+      "title": "Mobile uploads",
+      "items": "39 items",
+      "source": "https://www.facebook.com/media/set/?set=a.112847781827816&type=3"
+    },
+    {
+      "title": "Vinh danh CIT",
+      "items": "142 items",
+      "source": "https://www.facebook.com/media/set/?set=a.488621737583750&type=3"
+    },
+    {
+      "title": "HTTT",
+      "items": "28 items",
+      "source": "https://www.facebook.com/media/set/?set=a.408220595623865&type=3"
+    },
+    {
+      "title": "BIRTHDAY WITH CIT",
+      "items": "61 items",
+      "source": "https://www.facebook.com/media/set/?set=a.465636063215651&type=3"
+    }
+  ],
+  "requested_activities_status": [
+    {
+      "activity": "Hackerrank",
+      "status": "confirmed_from_facebook_album",
+      "evidence": "Ảnh trong album AETERNUM có chữ: CUỘC THI NỘI BỘ HACKERANK HƯỚNG TỚI KỈ NIỆM 2 NĂM THÀNH LẬP CIT"
+    },
+    {
+      "activity": "Lễ ra mắt / kỉ niệm thành lập",
+      "status": "confirmed_from_facebook_album",
+      "evidence": "Album AETERNUM - Lễ kỉ niệm 2 năm thành lập CIT"
+    },
+    {
+      "activity": "Vinh danh thành viên",
+      "status": "confirmed_from_facebook_album",
+      "evidence": "Album Vinh danh CIT và bài Chúc mừng các tân cử nhân"
+    },
+    {
+      "activity": "HTTT",
+      "status": "confirmed_from_facebook_album",
+      "evidence": "Album HTTT"
+    },
+    {
+      "activity": "Birthday With CIT",
+      "status": "confirmed_from_facebook_album",
+      "evidence": "Album BIRTHDAY WITH CIT"
+    },
+    {
+      "activity": "Camping",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    },
+    {
+      "activity": "Bóng giao hữu",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    },
+    {
+      "activity": "Tuyển thành viên",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    },
+    {
+      "activity": "Hướng nghiệp",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    },
+    {
+      "activity": "Lowcode",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    },
+    {
+      "activity": "IAI Hackathon",
+      "status": "needs_more_facebook_access_or_manual_link",
+      "evidence": "Chưa thấy trong các album công khai tải được khi chưa đăng nhập"
+    }
+  ],
+  "suggested_website_sections": [
+    {
+      "title": "Giới thiệu CIT",
+      "copy": "CIT là câu lạc bộ công nghệ của Trường Đại học Thương mại, tạo môi trường để sinh viên yêu thích công nghệ học hỏi, kết nối và phát triển chuyên môn.",
+      "image": "assets/images/cit/cit-cover.jpg"
+    },
+    {
+      "title": "Hoạt động nổi bật",
+      "copy": "CIT tổ chức và ghi dấu nhiều hoạt động như kỉ niệm thành lập, cuộc thi nội bộ HackerRank, vinh danh thành viên và các hoạt động gắn kết nội bộ.",
+      "image": "assets/images/cit/albums/aeternum-hackerrank.jpg"
+    },
+    {
+      "title": "Chuyên môn và học thuật",
+      "copy": "Các album công khai cho thấy CIT có nội dung chuyên môn như HTTT và cuộc thi nội bộ HackerRank, phù hợp để giới thiệu định hướng công nghệ của CLB.",
+      "image": "assets/images/cit/albums/httt.jpg"
+    },
+    {
+      "title": "Câu chuyện thành viên",
+      "copy": "Những thế hệ thành viên đi trước là nguồn cảm hứng để CIT tiếp tục giữ tinh thần đoàn kết, nhiệt huyết và không ngừng học hỏi.",
+      "image": "assets/images/cit/tan-cu-nhan-03.jpg"
+    },
+    {
+      "title": "Liên hệ",
+      "copy": "Theo dõi fanpage CIT hoặc liên hệ qua email, TikTok và hotline để cập nhật thông tin mới nhất.",
+      "image": "assets/images/cit/cit-cover.jpg"
+    }
+  ],
+  "local_images": [
+    {
+      "path": "assets/images/cit/cit-cover.jpg",
+      "purpose": "Hero/banner hoặc section giới thiệu CLB"
+    },
+    {
+      "path": "assets/images/cit/tan-cu-nhan-01.jpg",
+      "purpose": "Card hoạt động Chúc mừng các tân cử nhân"
+    },
+    {
+      "path": "assets/images/cit/tan-cu-nhan-02.jpg",
+      "purpose": "Gallery hoạt động"
+    },
+    {
+      "path": "assets/images/cit/tan-cu-nhan-03.jpg",
+      "purpose": "Gallery hoạt động"
+    },
+    {
+      "path": "assets/images/cit/tan-cu-nhan-04.jpg",
+      "purpose": "Gallery hoạt động"
+    },
+    {
+      "path": "assets/images/cit/tan-cu-nhan-05.jpg",
+      "purpose": "Gallery hoạt động"
+    },
+    {
+      "path": "assets/images/cit/albums/aeternum-hackerrank.jpg",
+      "purpose": "Card hoạt động AETERNUM/HackerRank"
+    },
+    {
+      "path": "assets/images/cit/albums/vinh-danh-cit.jpg",
+      "purpose": "Card hoạt động Vinh danh CIT"
+    },
+    {
+      "path": "assets/images/cit/albums/httt.jpg",
+      "purpose": "Card hoạt động HTTT"
+    },
+    {
+      "path": "assets/images/cit/albums/birthday-with-cit.jpg",
+      "purpose": "Card hoạt động Birthday With CIT"
+    }
+  ],
+  "notes": [
+    "Facebook public view without login currently exposes only limited posts. More historical activities require opening the fanpage while signed in.",
+    "Use local image files in the website instead of hotlinking fbcdn URLs, because Facebook CDN URLs can expire.",
+    "Images are intentionally saved in lightweight sizes for small hosting."
+  ]
+}
