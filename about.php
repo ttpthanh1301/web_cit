@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/data/club-content.php';
+require_once __DIR__ . '/includes/page-cache.php';
+
+if (empty($_GET) && page_cache_start('about', 3600)) {
+    exit;
+}
 
 $pageTitle = 'Giới thiệu';
 $pageScripts = ['assets/js/navbar.min.js'];
@@ -27,7 +32,7 @@ require_once __DIR__ . '/includes/header.php';
             </span>
             <h1>Cộng đồng sinh viên yêu công nghệ</h1>
             <p class="hero-lead mb-0">
-                Fanpage chính thức của CIT là nơi lưu giữ AETERNUM, HTTT, Birthday With CIT và Vinh danh CIT. Website giới thiệu những giá trị này để bạn hiểu rõ cách CLB vận hành và phát triển.
+                CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại và dưới sự quản lý của Khoa Công nghệ số ứng dụng.
             </p>
         </div>
     </div>
@@ -41,7 +46,7 @@ require_once __DIR__ . '/includes/header.php';
                     <span class="section-eyebrow">Sứ mệnh</span>
                     <h2 class="h3 fw-bold mb-3">Tạo môi trường học thật, làm thật, kết nối thật</h2>
                     <p class="text-secondary text-flow mb-0">
-                        CIT đồng hành cùng sinh viên yêu công nghệ thông qua workshop, seminar, cuộc thi nội bộ và các hoạt động cộng đồng. Những nội dung này được minh chứng qua album và bài đăng trên fanpage chính thức.
+                        CIT đồng hành cùng sinh viên yêu công nghệ thông qua workshop, seminar, cuộc thi nội bộ, nghiên cứu khoa học và các hoạt động cộng đồng. Những nội dung này được minh chứng qua album và bài đăng công khai trên fanpage chính thức.
                     </p>
                 </article>
             </div>
@@ -67,7 +72,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    Những giá trị này được thể hiện qua các album và bài đăng công khai trên fanpage: AETERNUM, HTTT, Birthday With CIT, Vinh danh CIT và Chúc mừng tân cử nhân.
+                    
                 </p>
             </div>
         </div>
@@ -94,7 +99,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    Những hoạt động được chọn trên website đều dựa trên album và bài đăng công khai của fanpage CIT Club.
+                    
                 </p>
             </div>
         </div>
@@ -136,7 +141,7 @@ require_once __DIR__ . '/includes/header.php';
             <p class="section-eyebrow justify-content-center">Lịch sử</p>
             <h2 class="display-6 fw-bold">Dấu mốc phát triển</h2>
             <p class="text-secondary text-narrow mx-auto mb-0">
-                Nội dung được chọn từ các album công khai đã lưu trong dự án, ưu tiên thông tin có bằng chứng từ fanpage CIT.
+                
             </p>
         </div>
         <div class="timeline-list">
@@ -158,14 +163,52 @@ require_once __DIR__ . '/includes/header.php';
         <div class="row align-items-end gy-3 mb-5">
             <div class="col-lg-7">
                 <p class="section-eyebrow">Thành viên & Ban điều hành</p>
-                <h2 class="display-6 fw-bold mb-0">Cơ cấu hoạt động của CIT</h2>
+                <h2 class="display-6 fw-bold mb-0">Cấu trúc Câu lạc bộ</h2>
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    Website chưa công bố tên cá nhân khi chưa có nguồn xác minh chính thức; phần này giới thiệu cơ cấu để người xem hiểu cách CLB vận hành.
+                    Ban điều hành và đại diện các tiểu ban chuyên môn dẫn dắt các hoạt động học thuật, truyền thông và sự kiện của CIT.
                 </p>
             </div>
         </div>
+
+        <?php
+        $bcn = array_slice($clubLeaders, 0, 3);
+        $trung_ban = array_slice($clubLeaders, 3);
+        ?>
+
+        <h3 class="h4 fw-bold mb-4 text-center">Ban Chủ Nhiệm (Nhiệm kỳ 2025 - 2026)</h3>
+        <div class="row g-4 mb-5 justify-content-center">
+            <?php foreach ($bcn as $leader): ?>
+                <div class="col-md-4">
+                    <article class="mini-card h-100 text-center" style="border-top: 3px solid var(--club-accent);">
+                        <div class="mini-card-icon mx-auto"><i class="bi bi-award-fill"></i></div>
+                        <h4 class="h5 fw-bold mb-1"><?= e((string) $leader['name']) ?></h4>
+                        <p class="text-primary fw-semibold mb-3"><?= e((string) $leader['role']) ?></p>
+                        <a class="fw-semibold text-decoration-none small" href="<?= e((string) $leader['source']) ?>" target="_blank" rel="noopener">
+                            Xem ảnh gốc <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                    </article>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <h3 class="h4 fw-bold mb-4 text-center">Trưởng Các Tiểu Ban</h3>
+        <div class="row g-3 mb-5 justify-content-center">
+            <?php foreach ($trung_ban as $leader): ?>
+                <div class="col-sm-6 col-md-4 col-lg-2">
+                    <article class="mini-card h-100 text-center">
+                        <div class="mini-card-icon mx-auto" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-person-fill"></i></div>
+                        <h4 class="h6 fw-bold mb-1" style="font-size: 0.9rem;"><?= e((string) $leader['name']) ?></h4>
+                        <p class="text-secondary small mb-3" style="font-size: 0.75rem;"><?= e((string) $leader['role']) ?></p>
+                        <a class="fw-semibold text-decoration-none small" style="font-size: 0.75rem;" href="<?= e((string) $leader['source']) ?>" target="_blank" rel="noopener">
+                            Ảnh nguồn <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </article>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
         <div class="row g-4">
             <?php foreach ($clubTeams as $team): ?>
                 <div class="col-md-6 col-lg-3">
@@ -173,6 +216,33 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="mini-card-icon"><i class="bi <?= e((string) $team['icon']) ?>"></i></div>
                         <h3 class="h5 fw-bold mb-2"><?= e((string) $team['title']) ?></h3>
                         <p class="text-secondary text-flow mb-0"><?= e((string) $team['copy']) ?></p>
+                    </article>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<section class="section-space">
+    <div class="container">
+        <div class="row align-items-end gy-3 mb-5">
+            <div class="col-lg-7">
+                <p class="section-eyebrow">Đối tác & doanh nghiệp</p>
+                <h2 class="display-6 fw-bold mb-0">Đơn vị liên quan trong hành trình CIT</h2>
+            </div>
+            <div class="col-lg-5">
+                <p class="text-secondary text-flow text-flow-lg mb-0">
+                    
+                </p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <?php foreach ($clubPartners as $partner): ?>
+                <div class="col-md-6 col-lg-3">
+                    <article class="mini-card h-100">
+                        <div class="mini-card-icon"><i class="bi <?= e((string) $partner['icon']) ?>"></i></div>
+                        <h3 class="h5 fw-bold mb-2"><?= e((string) $partner['title']) ?></h3>
+                        <p class="text-secondary text-flow mb-0"><?= e((string) $partner['copy']) ?></p>
                     </article>
                 </div>
             <?php endforeach; ?>
@@ -201,3 +271,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php page_cache_end(); ?>

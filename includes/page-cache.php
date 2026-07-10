@@ -13,10 +13,7 @@ function page_cache_start(string $key, int $ttlSeconds): bool
         return false;
     }
 
-    // Bỏ qua cache nếu là Admin đang đăng nhập
-    require_once __DIR__ . '/session.php';
-    ensure_session_started();
-    if (!empty($_SESSION['admin_id'])) {
+    if (isset($_COOKIE['cit_admin_session']) && $_COOKIE['cit_admin_session'] === '1') {
         return false;
     }
 
@@ -50,4 +47,23 @@ function page_cache_end(): void
     }
     ob_end_flush();
     unset($GLOBALS['page_cache_file']);
+}
+
+function page_cache_clear(?string $prefix = null): void
+{
+    $directory = __DIR__ . '/../cache/pages';
+    if (!is_dir($directory)) {
+        return;
+    }
+
+    $files = glob($directory . '/*.html') ?: [];
+    foreach ($files as $file) {
+        if (!is_file($file)) {
+            continue;
+        }
+
+        if ($prefix === null || str_starts_with(basename($file), $prefix)) {
+            @unlink($file);
+        }
+    }
 }

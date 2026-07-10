@@ -26,6 +26,13 @@ if (is_post()) {
         session_regenerate_id(true);
         $_SESSION['admin_id'] = (int) $admin['id'];
         $_SESSION['admin_username'] = $admin['username'];
+        setcookie('cit_admin_session', '1', [
+            'expires' => 0,
+            'path' => '/',
+            'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
         set_flash('success', 'Đăng nhập thành công.');
         redirect('dashboard.php');
     }
@@ -45,8 +52,8 @@ if (is_post()) {
 <body class="login-page">
 <main class="login-card shadow-lg">
     <div class="text-center mb-4">
-        <img src="../assets/images/cit/logoclb.png" alt="Logo CIT Club" width="72" height="72" class="login-logo" decoding="async">
-        <h1 class="h3 fw-bold mt-3">Quản trị CIT Club</h1>
+        <img src="../assets/images/cit/logoclb.png" alt="Logo CLB Công nghệ CIT" width="72" height="72" class="login-logo" decoding="async">
+        <h1 class="h3 fw-bold mt-3">Quản trị CLB Công nghệ CIT</h1>
         <p class="text-secondary mb-0">Đăng nhập để quản lý đơn tuyển thành viên</p>
     </div>
     <?php render_component('flash', ['flash' => $flash]); ?>

@@ -26,26 +26,69 @@ $clubValues = [
 
 $clubTimeline = [
     [
-        'label' => 'Nền tảng',
-        'title' => 'Cộng đồng sinh viên yêu công nghệ',
-        'copy' => 'CIT được xây dựng như một môi trường để sinh viên yêu thích công nghệ học hỏi, thực hành và kết nối.',
+        'label' => '18/05/2024',
+        'title' => 'Thành lập CIT',
+        'copy' => 'CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại và dưới sự quản lý của Khoa Công nghệ số ứng dụng.',
     ],
     [
-        'label' => 'Dấu mốc',
+        'label' => 'AETERNUM',
         'title' => 'AETERNUM - kỉ niệm 2 năm thành lập CIT',
-        'copy' => 'Album AETERNUM trên fanpage ghi lại hành trình phát triển, hoạt động chuyên môn và tinh thần gắn kết của câu lạc bộ.',
+        'copy' => 'Sự kiện kỷ niệm đánh dấu hành trình phát triển, ghi nhận các hoạt động chuyên môn và gắn kết các thế hệ thành viên.',
     ],
     [
-        'label' => 'Tiếp nối',
-        'title' => 'Vinh danh, kế thừa và phát triển',
-        'copy' => 'Các hoạt động vinh danh thành viên và chúc mừng tân cử nhân thể hiện sự trân trọng đóng góp của nhiều thế hệ CIT.',
+        'label' => '2025 - 2026',
+        'title' => 'Ra mắt Ban Chủ nhiệm nhiệm kỳ mới',
+        'copy' => 'Ra mắt Ban Chủ nhiệm nhiệm kỳ 2025 - 2026 cùng đại diện trưởng các tiểu ban chuyên môn để dẫn dắt hoạt động CLB.',
+    ],
+];
+
+$clubLeaders = [
+    [
+        'name' => 'Trần Nam Hải',
+        'role' => 'Chủ nhiệm',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332365412686&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Nguyễn Tuấn Anh',
+        'role' => 'Phó Chủ nhiệm',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332368746019&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Đỗ Khánh Thảo',
+        'role' => 'Phó Chủ nhiệm',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332372079352&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Ngô Phương Linh',
+        'role' => 'Trưởng Tiểu ban Nhân sự',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332378746018&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Nguyễn Thị Thanh Thương',
+        'role' => 'Trưởng Tiểu ban Chuyên môn',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332375412685&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Lê Phương Thảo',
+        'role' => 'Trưởng Tiểu ban Kỹ thuật',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332388746017&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Trần Minh Anh',
+        'role' => 'Trưởng Tiểu ban VJ',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332382079351&set=pcb.610332498746006',
+    ],
+    [
+        'name' => 'Lê Thị Hương Giang',
+        'role' => 'Trưởng Tiểu ban Biên tập',
+        'source' => 'https://www.facebook.com/photo/?fbid=610332395412683&set=pcb.610332498746006',
     ],
 ];
 
 $clubTeams = [
     [
         'icon' => 'bi-diagram-3',
-        'title' => 'Ban chủ nhiệm',
+        'title' => 'Ban Chủ nhiệm',
         'copy' => 'Định hướng hoạt động, kết nối các ban và giữ nhịp vận hành chung của câu lạc bộ.',
     ],
     [
@@ -65,10 +108,33 @@ $clubTeams = [
     ],
 ];
 
+$clubPartners = [
+    [
+        'icon' => 'bi-building',
+        'title' => 'Trường Đại học Thương mại',
+        'copy' => 'Đơn vị gắn với hoạt động, địa điểm và cộng đồng sinh viên của CIT.',
+    ],
+    [
+        'icon' => 'bi-mortarboard-fill',
+        'title' => 'Khoa Công nghệ số ứng dụng',
+        'copy' => 'Đơn vị quản lý chuyên môn được fanpage giới thiệu trong phần thông tin chính thức.',
+    ],
+    [
+        'icon' => 'bi-cpu-fill',
+        'title' => 'Vietnam University Cardano Workshop & Onboarding #07 - TMU',
+        'copy' => 'Hoạt động workshop mà CIT có bài đồng hành trên fanpage công khai.',
+    ],
+    [
+        'icon' => 'bi-briefcase-fill',
+        'title' => 'DEHA',
+        'copy' => 'Doanh nghiệp đối tác đồng hành cùng CIT trong các chương trình kết nối và định hướng cơ hội nghề nghiệp cho thành viên.',
+    ],
+];
+
 $clubActivityGroups = [
     [
         'group' => 'Chuyên môn',
-        'intro' => 'Các hoạt động giúp thành viên rèn luyện tư duy công nghệ, kỹ năng giải quyết vấn đề và định hướng nghề nghiệp.',
+        'intro' => '',
         'items' => [
             [
                 'title' => 'HackerRank nội bộ',
@@ -92,7 +158,7 @@ $clubActivityGroups = [
     ],
     [
         'group' => 'Văn hóa CLB',
-        'intro' => 'Những hoạt động giữ lửa tinh thần, ghi nhận đóng góp và tạo cảm giác thuộc về trong đại gia đình CIT.',
+        'intro' => '',
         'items' => [
             [
                 'title' => 'Birthday With CIT',

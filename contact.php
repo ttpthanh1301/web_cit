@@ -2,6 +2,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/page-cache.php';
+
+if (empty($_GET) && page_cache_start('contact', 3600)) {
+    exit;
+}
 
 $pageTitle = 'Liên hệ';
 $pageScripts = ['assets/js/navbar.min.js'];
@@ -38,7 +43,7 @@ require_once __DIR__ . '/includes/header.php';
             <div class="col-lg-7">
                 <article class="info-panel h-100">
                     <span class="section-eyebrow">Kênh chính thức</span>
-                    <h2 class="h3 fw-bold mb-3">Fanpage CIT Club</h2>
+                    <h2 class="h3 fw-bold mb-3">Fanpage CLB Công nghệ CIT</h2>
                     <p class="text-secondary text-flow mb-4">
                         Fanpage là kênh cập nhật hoạt động chính thức của CIT: bài đăng, album ảnh, thông báo tuyển thành viên và câu chuyện đời sống CLB. Website chọn lọc nội dung để hiển thị những điểm nhấn tiêu biểu.
                     </p>
@@ -94,3 +99,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php page_cache_end(); ?>

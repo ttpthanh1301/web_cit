@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/data/club-content.php';
+require_once __DIR__ . '/includes/page-cache.php';
+
+if (empty($_GET) && page_cache_start('activities', 3600)) {
+    exit;
+}
 
 $pageTitle = 'Hoạt động';
 $pageScripts = ['assets/js/navbar.min.js'];
@@ -98,3 +103,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php page_cache_end(); ?>

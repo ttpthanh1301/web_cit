@@ -7,11 +7,45 @@ require_once __DIR__ . '/includes/editable.php';
 
 $requestedAlbum = $_GET['album'] ?? 'aeternum';
 $cacheAlbum = is_string($requestedAlbum) ? $requestedAlbum : 'aeternum';
-if (count($_GET) <= 1 && page_cache_start('home-' . $cacheAlbum, 600)) {
+if (count($_GET) <= 1 && page_cache_start('home-v3-' . $cacheAlbum, 600)) {
     exit;
 }
 
-require_once __DIR__ . '/includes/home.php';
+require_once __DIR__ . '/includes/data/home.php';
+require_once __DIR__ . '/includes/home-components.php';
+
+// Tải cấu hình động
+$contents = editable_contents();
+$heroBg = get_hero_bg();
+$heroCtaText = $contents['hero_cta_text'] ?? 'Xem tuyển thành viên';
+$heroCtaUrl = $contents['hero_cta_url'] ?? 'recruitment.php';
+$heroExploreText = $contents['hero_explore_text'] ?? 'Khám phá fanpage';
+$heroExploreUrl = $contents['hero_explore_url'] ?? 'https://www.facebook.com/clbcongnghe.cit';
+
+// Tải danh sách section động
+$sectionsList = [];
+try {
+    $cacheSectionsFile = __DIR__ . '/cache/sections.php';
+    if (is_file($cacheSectionsFile)) {
+        $sectionsList = require $cacheSectionsFile;
+    } else {
+        require_once __DIR__ . '/includes/db.php';
+        $sectionsList = $pdo->query('SELECT section_key, is_visible FROM sections ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
+        if (!is_dir(dirname($cacheSectionsFile))) {
+            mkdir(dirname($cacheSectionsFile), 0755, true);
+        }
+        file_put_contents($cacheSectionsFile, '<?php return ' . var_export($sectionsList, true) . ';' . PHP_EOL, LOCK_EX);
+    }
+} catch (Throwable $e) {
+    $sectionsList = [
+        ['section_key' => 'hero', 'is_visible' => 1],
+        ['section_key' => 'highlights', 'is_visible' => 1],
+        ['section_key' => 'stats', 'is_visible' => 1],
+        ['section_key' => 'about', 'is_visible' => 1],
+        ['section_key' => 'activities', 'is_visible' => 1],
+        ['section_key' => 'gallery', 'is_visible' => 1],
+    ];
+}
 
 const GALLERY_MAX_PHOTOS = 6;
 
@@ -20,7 +54,9 @@ $pageScripts = [
     'assets/js/navbar.min.js',
     'assets/js/gallery.min.js',
 ];
-$preloadImages = ['assets/images/cit/cit-cover.webp'];
+$preloadImages = [$heroBg];
+$enableInlineEditing = isset($_COOKIE['cit_admin_session']) && $_COOKIE['cit_admin_session'] === '1';
+$includeCsrfMeta = $enableInlineEditing;
 
 $activeAlbum = $_GET['album'] ?? 'aeternum';
 if (!is_string($activeAlbum) || !array_key_exists($activeAlbum, $albums)) {
@@ -34,173 +70,300 @@ if (!$showAllPhotos) {
 }
 
 require_once __DIR__ . '/includes/header.php';
+
+// Vòng lặp hiển thị Section động dựa theo cấu hình
+foreach ($sectionsList as $sec) {
+    if ((int)$sec['is_visible'] !== 1) {
+        continue;
+    }
+
+    switch ($sec['section_key']) {
+        case 'hero':
+            ?>
+            <section class="hero">
+                <img class="hero-bg-img"
+                     src="<?= e($heroBg) ?>"
+                     alt=""
+                     width="1000"
+                     height="370"
+                     fetchpriority="high"
+                     decoding="async"
+                     aria-hidden="true">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="hero-kicker">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                            Câu lạc bộ Công nghệ Trường Đại học Thương mại
+                        </span>
+                        <h1><span class="gradient-text"><?= get_editable_content('home_title_current', 'CIT Club — Cộng đồng công nghệ sinh viên TMU', 'text') ?></span></h1>
+                        <p class="hero-lead"><?= get_editable_content('home_desc_current', 'CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại, dưới sự quản lý của Khoa Công nghệ số ứng dụng. ', 'html') ?></p>
+                        <div class="hero-ctas">
+                            <a class="btn btn-club btn-lg px-4 py-3" href="<?= e($heroCtaUrl) ?>" id="hero-cta-join">
+                                <i class="bi bi-person-plus-fill me-2"></i><?= e($heroCtaText) ?>
+                            </a>
+                            <a class="btn btn-outline-glass btn-lg px-4 py-3" href="<?= e($heroExploreUrl) ?>" target="_blank" rel="noopener" id="hero-cta-explore">
+                                <i class="bi bi-facebook me-2"></i><?= e($heroExploreText) ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+
+        case 'highlights':
+            ?>
+            <section class="section-space section-muted">
+                <div class="container">
+                    <div class="row align-items-end gy-3 mb-5">
+                        <div class="col-lg-7">
+                            <p class="section-eyebrow">Fanpage CIT Club</p>
+                            <h2 class="display-6 fw-bold mb-0">Điểm nhấn từ fanpage chính thức</h2>
+                        </div>
+                        <div class="col-lg-5">
+                            <p class="text-secondary text-narrow mx-auto mb-0">
+                                
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <article class="mini-card h-100">
+                                <div class="mini-card-icon"><i class="bi bi-fire"></i></div>
+                                <h3 class="h5 fw-bold mb-2">AETERNUM</h3>
+                                <p class="text-secondary text-flow mb-0">Khoảnh khắc kỷ niệm 2 năm thành lập và cuộc thi HackerRank nội bộ, thể hiện tinh thần học hỏi và sáng tạo của CIT.</p>
+                            </article>
+                        </div>
+                        <div class="col-md-4">
+                            <article class="mini-card h-100">
+                                <div class="mini-card-icon"><i class="bi bi-mic-fill"></i></div>
+                                <h3 class="h5 fw-bold mb-2">HTTT</h3>
+                                <p class="text-secondary text-flow mb-0">Hội thảo chuyên môn giúp thành viên tiếp cận thực tế ngành và xây dựng kỹ năng cạnh tranh.</p>
+                            </article>
+                        </div>
+                        <div class="col-md-4">
+                            <article class="mini-card h-100">
+                                <div class="mini-card-icon"><i class="bi bi-people-fill"></i></div>
+                                <h3 class="h5 fw-bold mb-2">Vinh danh & Sinh nhật</h3>
+                                <p class="text-secondary text-flow mb-0">Khoảnh khắc gắn kết nội bộ và vinh danh thành viên, tạo niềm tin cộng đồng trong mỗi hoạt động.</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+
+        case 'stats':
+            ?>
+            <section class="stats-bar">
+                <div class="container">
+                    <div class="row g-0 justify-content-center">
+                        <?php foreach ([
+                            ['2+ năm', 'Hành trình CIT'],
+                            ['30+ album', 'Khoảnh khắc'],
+                            ['100+', 'Thành viên được vinh danh'],
+                            ['100%', 'Tinh thần cởi mở'],
+                        ] as [$number, $label]): ?>
+                            <div class="col-6 col-sm-3 stat-item">
+                                <span class="stat-number"><?= e($number) ?></span>
+                                <span class="stat-label"><?= e($label) ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+
+        case 'about':
+            ?>
+            <section id="about" class="section-space">
+                <div class="container">
+                    <div class="row align-items-end gy-3 mb-5">
+                        <div class="col-lg-7">
+                            <p class="section-eyebrow">Về chúng mình</p>
+                            <h2 class="display-6 fw-bold mb-0">
+                                Một cộng đồng để bạn<br>tiến xa hơn cùng công nghệ
+                            </h2>
+                        </div>
+                        <div class="col-lg-5">
+                            <p class="text-secondary text-flow text-flow-lg mb-0">
+                                CIT tạo môi trường thực hành cởi mở, nơi mọi thành viên đều có thể
+                                chia sẻ kiến thức, thử sức với dự án thật và trưởng thành cùng nhau.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <?php foreach ($features as $feature): ?>
+                            <div class="col-md-4">
+                                <?php render_feature_card($feature); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+
+        case 'activities':
+            ?>
+            <section id="activities" class="section-space section-muted">
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <p class="section-eyebrow justify-content-center">Hoạt động</p>
+                        <h2 class="display-6 fw-bold">Những khoảnh khắc đáng nhớ</h2>
+                        <p class="text-secondary text-narrow mx-auto mt-2 mb-0">
+                            Từ hội thảo chuyên môn đến các sự kiện gắn kết - CIT luôn có điều gì đó
+                            dành cho bạn.
+                        </p>
+                    </div>
+                    <div class="row g-4">
+                        <?php foreach ($activities as $activity): ?>
+                            <div class="col-md-6 col-lg-4">
+                                <?php render_activity_card($activity); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+
+        case 'gallery':
+            ?>
+            <section id="gallery" class="section-space">
+                <div class="container">
+                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
+                        <div>
+                            <p class="section-eyebrow mb-1">Album ảnh</p>
+                            <h2 class="h3 fw-bold mb-0">Khoảnh khắc của CIT</h2>
+                        </div>
+                    </div>
+                    <?php render_gallery_grid($albums, $activeAlbum); ?>
+                </div>
+            </section>
+
+            <section class="section-space section-muted">
+                <div class="container text-center mb-5">
+                    <p class="section-eyebrow justify-content-center">Bento Grid</p>
+                    <h2 class="display-6 fw-bold mb-2">Đời sống CLB qua các con số</h2>
+                    <p class="text-secondary text-narrow mx-auto mb-0">Những điểm nhấn tiêu biểu được tổng hợp trực tiếp từ chặng đường hoạt động.</p>
+                </div>
+                <div class="container">
+                    <div class="bento-grid">
+                        <!-- Card 1 (2x2): Giải Nhất Startup 2025 -->
+                        <div class="bento-card bento-card-2x2">
+                            <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);"></div>
+                            <span class="bento-card-badge"><i class="bi bi-award-fill me-1"></i>Thành tích</span>
+                            <div class="bento-card-content">
+                                <h3 class="h3 fw-bold mb-2">Giải Nhất TMU's Startup 2025</h3>
+                                <p class="text-secondary mb-3">Thành viên CIT xuất sắc vượt qua các đội thi để giành ngôi vị cao nhất tại cuộc thi khởi nghiệp quy mô trường.</p>
+                                <a class="fw-semibold text-decoration-none mt-auto" href="https://www.facebook.com/photo/?fbid=735563756222879&set=pcb.735563836222871" target="_blank" rel="noopener">
+                                    Xem nguồn fanpage <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 (1x2): HackerRank nội bộ 2025 -->
+                        <div class="bento-card bento-card-1x2">
+                            <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(124, 92, 255, 0.15) 0%, transparent 70%);"></div>
+                            <span class="bento-card-badge" style="background: rgba(124, 92, 255, 0.1); color: #7c5cff;"><i class="bi bi-code-slash me-1"></i>Học thuật</span>
+                            <div class="bento-card-content">
+                                <h3 class="h4 fw-bold mb-2">HackerRank 2025</h3>
+                                <p class="text-secondary mb-3">Cuộc thi thuật toán nội bộ kịch tính hướng tới kỷ niệm 2 năm thành lập CLB Công nghệ CIT.</p>
+                                <div class="p-2 rounded bg-opacity-10 bg-dark mb-3 border border-secondary border-opacity-10" style="font-family: monospace; font-size: 0.85rem;">
+                                    <span class="text-success">$</span> rank list --top3<br>
+                                    <span class="text-muted">1. Nguyễn Tuấn Anh</span><br>
+                                    <span class="text-muted">2. Trần Nam Hải</span><br>
+                                    <span class="text-muted">3. Đỗ Khánh Thảo</span>
+                                </div>
+                                <a class="fw-semibold text-decoration-none" href="https://www.facebook.com/photo/?fbid=873520835760503&set=pcb.873540535758533" target="_blank" rel="noopener">
+                                    Xem chi tiết <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 (1x1): Reel nổi bật 25K views -->
+                        <div class="bento-card bento-card-1x1">
+                            <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
+                            <div class="bento-card-content">
+                                <h3 class="h5 fw-bold mb-1">Reel Nổi Bật</h3>
+                                <p class="text-secondary small mb-2">~25K lượt xem trên fanpage CIT.</p>
+                                <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/1903048183715092/" target="_blank" rel="noopener">
+                                    <i class="bi bi-facebook me-1"></i>Xem ngay
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 (1x1): Reel Khoảnh khắc 5.8K views -->
+                        <div class="bento-card bento-card-1x1">
+                            <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
+                            <div class="bento-card-content">
+                                <h3 class="h5 fw-bold mb-1">Đời sống CIT</h3>
+                                <p class="text-secondary small mb-2">~5.8K lượt xem hoạt động.</p>
+                                <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/2039372770790649/" target="_blank" rel="noopener">
+                                    <i class="bi bi-facebook me-1"></i>Xem ngay
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 (2x1): Nghiên cứu Khoa học cấp Khoa -->
+                        <div class="bento-card bento-card-2x1">
+                            <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);"></div>
+                            <span class="bento-card-badge" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;"><i class="bi bi-journal-check me-1"></i>NCKH</span>
+                            <div class="bento-card-content d-flex flex-row align-items-center justify-content-between gap-3">
+                                <div>
+                                    <h3 class="h4 fw-bold mb-1">NCKH Cấp Khoa</h3>
+                                    <p class="text-secondary mb-0">Các thành viên CIT xuất sắc đạt giải cao trong nghiên cứu khoa học cấp Khoa.</p>
+                                </div>
+                                <a class="btn btn-club btn-sm px-3 flex-shrink-0" href="https://www.facebook.com/photo/?fbid=850552041390716&set=pcb.850527074726546" target="_blank" rel="noopener">
+                                    Xem nguồn
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 6 (1x1): Reel Câu chuyện CIT 3.8K views -->
+                        <div class="bento-card bento-card-1x1">
+                            <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
+                            <div class="bento-card-content">
+                                <h3 class="h5 fw-bold mb-1">Câu chuyện CIT</h3>
+                                <p class="text-secondary small mb-2">~3.8K lượt xem video truyền cảm hứng.</p>
+                                <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/998861632561849/" target="_blank" rel="noopener">
+                                    <i class="bi bi-facebook me-1"></i>Xem ngay
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 7 (1x1): Workshop Cardano -->
+                        <div class="bento-card bento-card-1x1">
+                            <span class="bento-card-badge"><i class="bi bi-globe2 me-1"></i>Sự kiện</span>
+                            <div class="bento-card-content">
+                                <h3 class="h5 fw-bold mb-1">Cardano Workshop</h3>
+                                <p class="text-secondary small mb-2">Đồng hành cùng Blockchain Workshop #07 tại TMU.</p>
+                                <a class="fw-semibold text-decoration-none mt-auto small" href="https://www.facebook.com/photo/?fbid=789063120872942&set=a.408220595623865" target="_blank" rel="noopener">
+                                    Xem thêm <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <?php
+            break;
+    }
+}
 ?>
-<section class="hero">
-    <img class="hero-bg-img"
-         src="assets/images/cit/cit-cover.webp"
-         alt=""
-         width="1000"
-         height="370"
-         fetchpriority="high"
-         decoding="async"
-         aria-hidden="true">
-    <div class="container">
-        <div class="hero-content">
-            <span class="hero-kicker">
-                <i class="bi bi-lightning-charge-fill"></i>
-                Câu lạc bộ Công nghệ Thông tin
-            </span>
-            <h1><?= get_editable_content('home_title', 'CIT Club — Cộng đồng công nghệ sinh viên TMU', 'text') ?></h1>
-            <p class="hero-lead"><?= get_editable_content('home_desc', 'Đây là điểm đến trực tuyến của fanpage chính thức CIT, nơi chúng tôi chọn lọc hình ảnh và câu chuyện từ AETERNUM, HTTT, Birthday With CIT và Vinh danh CIT. Khám phá phong cách hoạt động: học thật, làm thật và kết nối thật.', 'html') ?></p>
-            <div class="hero-ctas">
-                <a class="btn btn-club btn-lg px-4 py-3" href="recruitment.php" id="hero-cta-join">
-                    <i class="bi bi-person-plus-fill me-2"></i>Ứng tuyển CIT ngay
-                </a>
-                <a class="btn btn-outline-glass btn-lg px-4 py-3" href="https://www.facebook.com/clbcongnghe.cit" target="_blank" rel="noopener" id="hero-cta-explore">
-                    <i class="bi bi-facebook me-2"></i>Khám phá fanpage
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="section-space section-muted">
-    <div class="container">
-        <div class="row align-items-end gy-3 mb-5">
-            <div class="col-lg-7">
-                <p class="section-eyebrow">Fanpage CIT Club</p>
-                <h2 class="display-6 fw-bold mb-0">Điểm nhấn từ fanpage chính thức</h2>
-            </div>
-            <div class="col-lg-5">
-                <p class="text-secondary text-narrow mx-auto mb-0">
-                    Các hoạt động nổi bật được chọn lọc từ album công khai và bài đăng fanpage, phản ánh đời sống thực tế của CLB.
-                </p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-fire"></i></div>
-                    <h3 class="h5 fw-bold mb-2">AETERNUM</h3>
-                    <p class="text-secondary text-flow mb-0">Khoảnh khắc kỷ niệm 2 năm thành lập và cuộc thi HackerRank nội bộ, thể hiện tinh thần học hỏi và sáng tạo của CIT.</p>
-                </article>
-            </div>
-            <div class="col-md-4">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-mic-fill"></i></div>
-                    <h3 class="h5 fw-bold mb-2">HTTT</h3>
-                    <p class="text-secondary text-flow mb-0">Hội thảo chuyên môn giúp thành viên tiếp cận thực tế ngành và xây dựng kỹ năng cạnh tranh.</p>
-                </article>
-            </div>
-            <div class="col-md-4">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-people-fill"></i></div>
-                    <h3 class="h5 fw-bold mb-2">Vinh danh & Sinh nhật</h3>
-                    <p class="text-secondary text-flow mb-0">Khoảnh khắc gắn kết nội bộ và vinh danh thành viên, tạo niềm tin cộng đồng trong mỗi hoạt động.</p>
-                </article>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="stats-bar">
-    <div class="container">
-        <div class="row g-0 justify-content-center">
-            <?php foreach ([
-                ['2+ năm', 'Hành trình CIT'],
-                ['30+ album', 'Khoảnh khắc'],
-                ['140+', 'Thành viên được vinh danh'],
-                ['100%', 'Tinh thần cởi mở'],
-            ] as [$number, $label]): ?>
-                <div class="col-6 col-sm-3 stat-item">
-                    <span class="stat-number"><?= e($number) ?></span>
-                    <span class="stat-label"><?= e($label) ?></span>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<section id="about" class="section-space">
-    <div class="container">
-        <div class="row align-items-end gy-3 mb-5">
-            <div class="col-lg-7">
-                <p class="section-eyebrow">Về chúng mình</p>
-                <h2 class="display-6 fw-bold mb-0">
-                    Một cộng đồng để bạn<br>tiến xa hơn cùng công nghệ
-                </h2>
-            </div>
-            <div class="col-lg-5">
-                <p class="text-secondary text-flow text-flow-lg mb-0">
-                    CIT tạo môi trường thực hành cởi mở, nơi mọi thành viên đều có thể
-                    chia sẻ kiến thức, thử sức với dự án thật và trưởng thành cùng nhau.
-                </p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <?php foreach ($features as $feature): ?>
-                <div class="col-md-4">
-                    <?php render_feature_card($feature); ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<section id="activities" class="section-space section-muted">
-    <div class="container">
-        <div class="text-center mb-5">
-            <p class="section-eyebrow justify-content-center">Hoạt động</p>
-            <h2 class="display-6 fw-bold">Những khoảnh khắc đáng nhớ</h2>
-            <p class="text-secondary text-narrow mx-auto mt-2 mb-0">
-                Từ hội thảo chuyên môn đến các sự kiện gắn kết - CIT luôn có điều gì đó
-                dành cho bạn.
-            </p>
-        </div>
-        <div class="row g-4">
-            <?php foreach ($activities as $activity): ?>
-                <div class="col-md-6 col-lg-4">
-                    <?php render_activity_card($activity); ?>
-                </div>
-            <?php endforeach; ?>
-            <div class="col-md-6 col-lg-4 d-flex">
-                <?php render_cta_banner([
-                    'layout' => 'vertical',
-                    'badgeIcon' => 'bi-megaphone-fill',
-                    'badgeText' => 'Đang mở đơn',
-                    'title' => 'Trở thành thành viên CIT!',
-                    'copy' => 'Không cần kinh nghiệm - chỉ cần tinh thần học hỏi và sự chủ động.',
-                    'btnText' => 'Đăng ký ngay',
-                    'btnUrl' => 'recruitment.php',
-                    'btnId' => 'activities-cta-join',
-                    'btnIcon' => 'bi-arrow-right-circle',
-                ]); ?>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="gallery" class="section-space">
-    <div class="container">
-        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
-            <div>
-                <p class="section-eyebrow mb-1">Album ảnh</p>
-                <h2 class="h3 fw-bold mb-0">Khoảnh khắc của CIT</h2>
-            </div>
-        </div>
-        <?php render_gallery_grid($albums, $activeAlbum); ?>
-    </div>
-</section>
 
 <section class="section-space-sm">
     <div class="container">
         <?php render_cta_banner([
             'layout' => 'horizontal',
             'badgeIcon' => 'bi-stars',
-            'badgeText' => 'Mở đơn tuyển thành viên',
-            'title' => 'Sẵn sàng gia nhập gia đình CIT?',
-            'copy' => 'Đừng lo nếu bạn chưa có nhiều kinh nghiệm - chúng mình tìm kiếm tinh thần học hỏi, sự chủ động và nhiệt huyết của bạn.',
-            'btnText' => 'Đăng ký thành viên',
+            'badgeText' => 'Tuyển thành viên',
+            'title' => 'Sẵn sàng tìm hiểu hành trình CIT?',
+            'copy' => 'Tìm hiểu quy trình, quyền lợi và để lại thông tin của bạn để không bỏ lỡ cơ hội đồng hành cùng CIT.',
+            'btnText' => 'Xem thông tin tuyển thành viên',
             'btnUrl' => 'recruitment.php',
             'btnId' => 'bottom-cta-join',
             'btnIcon' => 'bi-person-plus-fill',

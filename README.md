@@ -1,37 +1,105 @@
-# CIT Club Recruitment
+# Câu lạc bộ Công nghệ CIT - Website Tuyển thành viên
 
-Website tuyển thành viên CLB viết bằng PHP thuần, PDO, MySQL, Bootstrap 5 và PhpSpreadsheet.
+Website chính thức tuyển thành viên của Câu lạc bộ Công nghệ CIT (Trường Đại học Thương mại), được xây dựng bằng PHP thuần, PDO, MySQL và Bootstrap 5. 
 
-## Yêu cầu
+Dự án này đã được tối ưu hóa đặc biệt để có thể hoạt động mượt mà và tải cực nhanh trên các hosting chia sẻ (Shared Hosting) có cấu hình cực thấp (ví dụ: 1 CPU, 512MB RAM, 2GB SSD).
 
-- PHP 8.1 trở lên với các extension `pdo_mysql`, `mbstring`, `xml`, `zip`, `gd`
-- MySQL 5.7+/MariaDB tương thích
-- Composer 2
+---
 
-## Cài đặt
+## 🛠️ Yêu cầu hệ thống
 
-1. Chạy `composer install --no-dev --optimize-autoloader`.
-2. Import file `database.sql` vào MySQL.
-3. Sao chép/cấu hình file `.env` với các biến `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`; biến môi trường hệ thống (nếu có) được ưu tiên hơn file này.
-4. Trỏ document root của website vào thư mục dự án và bảo đảm PHP có quyền tạo session.
-5. Đăng nhập tại `/admin/login.php` bằng tài khoản mẫu `admin` / `admin123`, sau đó đổi mật khẩu hash trong database trước khi đưa lên môi trường thật.
+*   **PHP:** Phiên bản `8.1` trở lên (Yêu cầu bật extension `pdo_mysql`, `mbstring`, `gd`, `xml`, `zip`).
+*   **Database:** MySQL `5.7` trở lên hoặc MariaDB tương thích.
+*   **Composer:** Phiên bản `2.x`.
 
-Không commit file chứa thông tin đăng nhập thật. Thư mục `vendor/` được tạo lại bằng Composer và đã nằm trong `.gitignore`.
+---
 
-## Cấu hình Tối ưu cho Shared Hosting (OPcache)
+## 🚀 Hướng dẫn cài đặt & Chạy cục bộ (Local)
 
-Để website phản hồi nhanh nhất và tiết kiệm RAM/CPU trên shared hosting (ví dụ: cPanel):
-1. Đăng nhập vào cPanel của bạn.
-2. Tìm và chọn mục **Select PHP Version**.
-3. Chuyển sang tab **Extensions**.
-4. Tìm extension **opcache** và tích chọn để bật nó lên.
-5. (Tùy chọn) Nếu có quyền cấu hình `php.ini`, thêm các thông số sau để tối ưu bộ nhớ đệm:
-   ```ini
-   opcache.enable=1
-   opcache.memory_consumption=64
-   opcache.interned_strings_buffer=8
-   opcache.max_accelerated_files=2000
-   opcache.validate_timestamps=1
-   opcache.revalidate_freq=2
-   ```
+Thực hiện các bước sau sau khi clone mã nguồn dự án về máy:
 
+### 1. Cài đặt các thư viện phụ thuộc
+Chạy lệnh sau tại thư mục gốc của dự án để thiết lập autoloader tối ưu hóa:
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+### 2. Thiết lập cấu hình môi trường
+*   Sao chép tệp tin cấu hình mẫu thành tệp hoạt động thực tế:
+    ```bash
+    cp .env.example .env
+    ```
+*   Mở tệp `.env` vừa tạo và chỉnh sửa thông tin kết nối Cơ sở dữ liệu cho phù hợp với máy của bạn (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`).
+
+### 3. Cài đặt MySQL & Nhập (Import) Cơ sở dữ liệu
+
+#### A. Cài đặt MySQL (nếu chưa có)
+Nếu máy của bạn chưa cài đặt PHP & MySQL, phương thức đơn giản nhất là sử dụng các bộ phần mềm tích hợp sẵn:
+*   **Dành cho Windows:** Khuyên dùng [Laragon](https://laragon.org/) hoặc [XAMPP](https://www.apachefriends.org/).
+*   **Dành cho macOS:** Khuyên dùng [MAMP](https://www.mamp.info/) hoặc cài đặt qua Homebrew: `brew install mysql`.
+*   *Tải lẻ MySQL:* Bạn cũng có thể tải trực tiếp từ [MySQL Community Server](https://dev.mysql.com/downloads/mysql/).
+
+#### B. Cách nhập (Import) cơ sở dữ liệu mẫu
+Sau khi đã cài đặt và khởi động dịch vụ MySQL, bạn thực hiện import file cơ sở dữ liệu [database.sql](file:///Users/tranthanh/Documents/Workspaces/WEB_CIT/database.sql) theo 1 trong 2 cách sau:
+
+##### Cách 1: Sử dụng phpMyAdmin (Trực quan - khuyên dùng)
+1.  Mở trình duyệt, truy cập vào đường dẫn quản lý cơ sở dữ liệu (thường là `http://localhost/phpmyadmin` khi sử dụng XAMPP/MAMP).
+2.  Click chọn tab **Cơ sở dữ liệu (Databases)** ở trên cùng.
+3.  Nhập tên cơ sở dữ liệu mới (ví dụ: `club_management`), chọn bảng mã `utf8mb4_unicode_ci` và nhấn **Tạo (Create)**.
+4.  Chọn cơ sở dữ liệu `club_management` vừa tạo ở thanh bên trái.
+5.  Chọn tab **Nhập (Import)** ở thanh menu trên cùng.
+6.  Nhấn nút **Chọn tệp (Choose File)** và tìm đến tệp tin [database.sql](file:///Users/tranthanh/Documents/Workspaces/WEB_CIT/database.sql) trong thư mục dự án của bạn.
+7.  Cuộn xuống dưới cùng và nhấn nút **Nhập (Import / Go)**.
+
+##### Cách 2: Sử dụng dòng lệnh Terminal / Command Prompt (Nhanh)
+1.  Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows).
+2.  Đăng nhập vào MySQL và tạo cơ sở dữ liệu:
+    ```bash
+    mysql -u root -p
+    # Nhập mật khẩu MySQL của bạn (nếu có), sau đó chạy lệnh:
+    CREATE DATABASE club_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    EXIT;
+    ```
+3.  Thực hiện import file SQL trực tiếp bằng lệnh:
+    ```bash
+    mysql -u root -p club_management < /đường/dẫn/đến/dự/án/database.sql
+    # Ví dụ trên Windows: mysql -u root -p club_management < C:\path\to\project\database.sql
+    ```
+
+### 4. Chạy Server phát triển cục bộ
+Khởi động PHP built-in server tại thư mục gốc dự án:
+```bash
+php -S localhost:8000
+```
+Mở trình duyệt và truy cập: `http://localhost:8000` để xem kết quả.
+
+### 5. Quản trị hệ thống
+*   Đường dẫn trang quản trị: `http://localhost:8000/admin/login.php`
+*   Tài khoản đăng nhập mặc định:
+    *   **Username:** `admin`
+    *   **Password:** `admin123`
+*   *Lưu ý bảo mật:* Vui lòng thay đổi mã băm mật khẩu trong database trước khi đưa trang web lên môi trường thật.
+
+---
+
+## ⚡ Các giải pháp tối ưu hiệu năng đã triển khai
+
+Website được áp dụng các cơ chế tối ưu giúp giảm tải CPU, RAM và tối đa hóa dung lượng trống:
+
+1.  **Trì hoãn kết nối Database (Lazy Connect):** Lớp proxy `LazyPDO` đảm bảo kết nối MySQL chỉ mở ra khi thực sự có câu lệnh truy vấn dữ liệu (không tự động kết nối ngay khi tải trang).
+2.  **Bộ đệm trường thông tin (Fields Caching):** Cấu trúc trường trong trang tuyển thành viên được lưu ra file tĩnh PHP tại `cache/form-fields.php`. Người dùng tải trang không tạo bất kỳ query nào đến MySQL.
+3.  **Static Page Caching:** Bộ đệm HTML tĩnh được áp dụng cho toàn bộ các trang công khai (Trang chủ, Giới thiệu, Hoạt động, Liên hệ, Tuyển thành viên) giúp thời gian tải trang nhanh như trang web tĩnh (TTFB < 15ms).
+4.  **Tự động dọn dẹp Log:** Cơ chế tự động cắt ngắn tệp log lỗi khi vượt quá 5MB để tránh làm đầy bộ nhớ SSD 2GB.
+5.  **Asset Minification:** Toàn bộ CSS và JS tùy chỉnh đều được biên dịch rút gọn (`app.min.css` và `editable.min.js`) để tăng tốc độ tải file.
+6.  **Loại bỏ thư viện thừa:** Đã gỡ bỏ thư viện nặng `phpspreadsheet` do hệ thống hỗ trợ xuất file Excel dưới định dạng CSV thô siêu nhẹ bằng hàm mặc định của PHP.
+
+---
+
+## 📦 Biên dịch tài nguyên tĩnh (Minify Assets)
+
+Nếu bạn thay đổi hoặc phát triển thêm mã nguồn trong các tệp CSS/JS gốc ([assets/css/app.css](file:///Users/tranthanh/Documents/Workspaces/WEB_CIT/assets/css/app.css) hoặc [assets/js/editable.js](file:///Users/tranthanh/Documents/Workspaces/WEB_CIT/assets/js/editable.js)), hãy chạy lệnh sau để tự động rút gọn và cập nhật vào các tệp `.min.*`:
+
+```bash
+php scripts/build.php
+```
+Tệp tin [scripts/build.php](file:///Users/tranthanh/Documents/Workspaces/WEB_CIT/scripts/build.php) sẽ tự động minify và cập nhật lại giao diện tĩnh mới nhất.

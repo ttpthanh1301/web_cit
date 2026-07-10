@@ -1,11 +1,17 @@
 <?php
 declare(strict_types=1);
 
-// Buffer output để tránh "headers already sent" crash trên shared hosting và nén GZIP.
-// PHP built-in server tự phục vụ local dev tốt hơn khi không bọc ob_gzhandler.
-$isBuiltInServer = PHP_SAPI === 'cli-server';
-if (!$isBuiltInServer && !ob_get_level()) {
-    ob_start(extension_loaded('zlib') && !ini_get('zlib.output_compression') ? 'ob_gzhandler' : null);
+// Tối ưu hóa bộ nhớ cho hosting RAM thấp (512MB)
+ini_set('memory_limit', '128M');
+
+// Tự động kiểm tra và quay vòng log lỗi định kỳ nếu vượt quá 5MB
+$logFile = ini_get('error_log');
+if ($logFile && is_file($logFile) && filesize($logFile) > 5 * 1024 * 1024) {
+    $lines = file($logFile);
+    if (is_array($lines)) {
+        $trimmed = array_slice($lines, -1000); // Giữ lại 1000 dòng log cuối cùng
+        file_put_contents($logFile, implode('', $trimmed), LOCK_EX);
+    }
 }
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -25,7 +31,7 @@ if (is_file($envFile) && is_readable($envFile)) {
     }
 }
 
-const APP_NAME = 'CIT Club';
+const APP_NAME = 'CLB Công nghệ CIT';
 const ALLOWED_FIELD_TYPES = ['text', 'email', 'phone', 'textarea', 'dropdown', 'radio', 'checkbox'];
 const ALLOWED_SUBMISSION_STATUSES = ['pending', 'approved', 'rejected'];
 

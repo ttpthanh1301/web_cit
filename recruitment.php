@@ -3,20 +3,41 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/form-fields.php';
-require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/page-cache.php';
+
+if (empty($_GET) && page_cache_start('recruitment', 3600)) {
+    exit;
+}
 
 ensure_session_started();
 
-$fields = $pdo->query(
-    'SELECT id, field_label, field_name, field_type, options, is_required
-     FROM form_fields
-     ORDER BY sort_order ASC, id ASC'
-)->fetchAll();
+// Đọc danh sách trường đăng ký từ cache tĩnh
+$cacheFile = __DIR__ . '/cache/form-fields.php';
+if (is_file($cacheFile)) {
+    $fields = require $cacheFile;
+} else {
+    require_once __DIR__ . '/includes/db.php';
+    $fields = $pdo->query(
+        'SELECT id, field_label, field_name, field_type, options, is_required
+         FROM form_fields
+         ORDER BY sort_order ASC, id ASC'
+    )->fetchAll();
+    if (!is_dir(dirname($cacheFile))) {
+        mkdir(dirname($cacheFile), 0755, true);
+    }
+    file_put_contents($cacheFile, '<?php return ' . var_export($fields, true) . ';' . PHP_EOL, LOCK_EX);
+}
 
 $errors = [];
 $answers = [];
 
 if (is_post()) {
+    require_once __DIR__ . '/includes/db.php';
+    $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+    if ($contentLength > 20000) {
+        $errors['form'] = 'Dữ liệu gửi lên quá lớn. Vui lòng rút gọn nội dung và thử lại.';
+    }
+
     verify_csrf();
     $postedAnswers = isset($_POST['fields']) && is_array($_POST['fields']) ? $_POST['fields'] : [];
 
@@ -92,6 +113,10 @@ if (is_post()) {
                     ? json_encode($answer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
                     : (string) $answer;
 
+                if ((int) $field['is_required'] !== 1 && ($storedValue === '' || $storedValue === '[]')) {
+                    continue;
+                }
+
                 $insertValue->execute([
                     'submission_id' => $submissionId,
                     'field_id' => $fieldId,
@@ -100,6 +125,7 @@ if (is_post()) {
             }
 
             $pdo->commit();
+            unset($answers, $postedAnswers);
             redirect('recruitment.php?success=1');
         } catch (Throwable $exception) {
             if ($pdo->inTransaction()) {
@@ -113,13 +139,14 @@ if (is_post()) {
 
 $pageTitle = 'Tuyển thành viên';
 $pageScripts = ['assets/js/navbar.min.js'];
+$includeCsrfMeta = true;
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="recruitment-hero">
     <div class="container text-center">
-        <p class="text-uppercase fw-bold small opacity-75 mb-2">Cùng viết tiếp hành trình CIT</p>
-        <h1 class="display-4 fw-bold">Ứng tuyển thành viên CIT</h1>
-        <p class="lead text-wide mx-auto mb-0">Dựa trên những hoạt động fanpage như AETERNUM, HTTT, Birthday With CIT và Vinh danh CIT, chúng mình chào đón bạn yêu công nghệ và muốn trải nghiệm thực tế.</p>
+        <p class="text-uppercase fw-bold small opacity-75 mb-2">Tuyển thành viên</p>
+        <h1 class="display-4 fw-bold">Tuyển thành viên CIT</h1>
+        <p class="lead text-wide mx-auto mb-0">Câu lạc bộ thường xuyên mở các đợt tuyển thành viên theo từng học kỳ. Website tiếp nhận thông tin đăng ký của các bạn sinh viên quan tâm và sẽ liên hệ khi đợt tuyển mới bắt đầu.</p>
     </div>
 </section>
 
@@ -132,7 +159,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    CIT là nơi bạn rèn kỹ năng, tham gia dự án thực tế và kết nối với những người cùng đam mê công nghệ.
+                    CIT là nơi bạn học hỏi, thực chiến, kết nối và tham gia các hoạt động chuyên môn, sự kiện nội bộ của một cộng đồng sinh viên yêu công nghệ.
                 </p>
             </div>
         </div>
@@ -141,7 +168,7 @@ require_once __DIR__ . '/includes/header.php';
                 <article class="mini-card h-100 text-center">
                     <div class="mini-card-icon"><i class="bi bi-gear-fill"></i></div>
                     <h3 class="h5 fw-bold mb-2">Rèn kỹ năng thực tế</h3>
-                    <p class="text-secondary mb-0">Làm việc cùng dự án, tham gia workshop và tự tin cọ xát với thử thách công nghệ.</p>
+                    <p class="text-secondary mb-0">Tham gia workshop, cuộc thi thuật toán, hoạt động Low-code và các buổi chia sẻ chuyên môn.</p>
                 </article>
             </div>
             <div class="col-md-4">
@@ -154,8 +181,8 @@ require_once __DIR__ . '/includes/header.php';
             <div class="col-md-4">
                 <article class="mini-card h-100 text-center">
                     <div class="mini-card-icon"><i class="bi bi-award"></i></div>
-                    <h3 class="h5 fw-bold mb-2">Vinh danh cống hiến</h3>
-                    <p class="text-secondary mb-0">Được ghi nhận trong các hoạt động CIT và cảm nhận tinh thần trân trọng đóng góp.</p>
+                    <h3 class="h5 fw-bold mb-2">Ghi nhận nỗ lực</h3>
+                    <p class="text-secondary mb-0">Được đồng hành trong môi trường có hoạt động vinh danh, NCKH và thành tích sinh viên nổi bật.</p>
                 </article>
             </div>
         </div>
@@ -167,39 +194,51 @@ require_once __DIR__ . '/includes/header.php';
         <div class="row align-items-end gy-3 mb-5">
             <div class="col-lg-7">
                 <p class="section-eyebrow">Quy trình</p>
-                <h2 class="display-6 fw-bold mb-0">3 bước để gia nhập CIT</h2>
+                <h2 class="display-6 fw-bold mb-0">Quy trình tuyển thành viên</h2>
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    Thủ tục đơn giản, rõ ràng và nhanh chóng. Bạn chỉ cần gửi thông tin, CIT sẽ xem xét và liên hệ lại.
+                    Quy trình tuyển chọn thành viên chính thức thường diễn ra qua 3 vòng cốt lõi của chiến dịch **Gen 4 - KRYSTAL**:
                 </p>
             </div>
         </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <article class="mini-card h-100 text-center">
-                    <div class="mini-card-icon"><i class="bi bi-pencil-square"></i></div>
-                    <h3 class="h5 fw-bold mb-2">1. Ứng tuyển</h3>
-                    <p class="text-secondary mb-0">Gửi thông tin cá nhân và chia sẻ lý do bạn muốn tham gia CIT.</p>
-                </article>
+        
+        <div class="circuit-timeline">
+            <!-- Electric path line -->
+            <div class="circuit-path">
+                <div class="circuit-path-fill"></div>
             </div>
-            <div class="col-md-4">
-                <article class="mini-card h-100 text-center">
-                    <div class="mini-card-icon"><i class="bi bi-chat-dots-fill"></i></div>
-                    <h3 class="h5 fw-bold mb-2">2. Kiểm tra</h3>
-                    <p class="text-secondary mb-0">Ban tuyển dụng sẽ xem xét, trao đổi và xác nhận với bạn trong thời gian sớm nhất.</p>
-                </article>
+            
+            <!-- Step 1 -->
+            <div class="circuit-step">
+                <div class="circuit-node">1</div>
+                <div class="circuit-content">
+                    <h3 class="h5 fw-bold mb-2">Khai thác</h3>
+                    <p class="text-secondary small mb-0"><strong>04/09 - 20/09</strong><br>Nộp đơn ứng tuyển trực tuyến để chọn lọc hồ sơ ban đầu.</p>
+                </div>
             </div>
-            <div class="col-md-4">
-                <article class="mini-card h-100 text-center">
-                    <div class="mini-card-icon"><i class="bi bi-joystick"></i></div>
-                    <h3 class="h5 fw-bold mb-2">3. Gắn kết</h3>
-                    <p class="text-secondary mb-0">Gia nhập CIT, tham gia hoạt động và trải nghiệm tinh thần đồng đội cùng fanpage chính thức.</p>
-                </article>
+            
+            <!-- Step 2 -->
+            <div class="circuit-step">
+                <div class="circuit-node">2</div>
+                <div class="circuit-content">
+                    <h3 class="h5 fw-bold mb-2">Kiểm định</h3>
+                    <p class="text-secondary small mb-0"><strong>24/09 - 26/09</strong><br>Phỏng vấn trực tiếp & test tình huống (K61) / Thuật toán (K58, 59, 60).</p>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="circuit-step">
+                <div class="circuit-node">3</div>
+                <div class="circuit-content">
+                    <h3 class="h5 fw-bold mb-2">Mài giũa</h3>
+                    <p class="text-secondary small mb-0"><strong>29/09 - 02/11</strong><br>Thử thách thực tế tại các tiểu ban trước khi chào đón thành viên chính thức.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
 
 <section class="pb-5">
     <div class="container container-form">
@@ -207,14 +246,14 @@ require_once __DIR__ . '/includes/header.php';
             <?php if (($_GET['success'] ?? '') === '1'): ?>
                 <div class="alert alert-success p-4 mb-0" role="alert">
                     <h2 class="h4 alert-heading">Đăng ký thành công!</h2>
-                    <p class="mb-3">Cảm ơn bạn đã quan tâm đến CIT Club. Chúng mình đã nhận được thông tin và sẽ liên hệ với bạn sớm nhất.</p>
+                    <p class="mb-3">Cảm ơn bạn đã quan tâm đến CLB Công nghệ CIT. Chúng mình đã nhận được thông tin và sẽ liên hệ với bạn sớm nhất.</p>
                     <a href="index.php" class="btn btn-success">Về trang chủ</a>
                 </div>
             <?php else: ?>
                 <div class="mb-4">
                     <span class="section-eyebrow">Đơn ứng tuyển</span>
-                    <h2 class="h3 fw-bold mt-2">Hãy cho chúng mình biết về bạn</h2>
-                    <p class="text-secondary mb-0">Các mục có dấu <span class="required-mark">*</span> là bắt buộc.</p>
+                    <h3 class="h3 fw-bold mt-2">Để lại thông tin quan tâm</h3>
+                    <p class="text-secondary mb-0">Để lại thông tin ứng tuyển bên dưới; form dùng để ghi nhận sự quan tâm và liên hệ cho đợt tuyển tiếp theo. Các mục có dấu <span class="required-mark">*</span> là bắt buộc.</p>
                 </div>
 
                 <?php if (isset($errors['form'])): ?>
@@ -243,3 +282,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php page_cache_end(); ?>

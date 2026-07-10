@@ -82,7 +82,7 @@ require_once __DIR__ . '/header.php';
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white py-3">
-        <h5 class="card-title fw-bold mb-0">Hệ thống quản trị CIT Club</h5>
+        <h5 class="card-title fw-bold mb-0">Hệ thống quản trị CLB Công nghệ CIT</h5>
     </div>
     <div class="card-body">
         <p>Chào mừng bạn quay trở lại trang quản trị! Bạn có thể sử dụng thanh điều hướng bên cạnh để quản lý đơn ứng tuyển thành viên hoặc tùy chỉnh cấu hình form đăng ký.</p>

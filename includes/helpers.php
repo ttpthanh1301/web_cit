@@ -75,20 +75,63 @@ function unique_field_name(PDO $pdo, string $label): string
     return $name;
 }
 
-function status_label(string $status): string
-{
-    return match ($status) {
-        'approved' => 'Đã duyệt',
-        'rejected' => 'Bị từ chối',
-        default => 'Đang xem xét',
-    };
+if (!function_exists('status_label')) {
+    function status_label(string $status): string
+    {
+        return match ($status) {
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Bị từ chối',
+            default => 'Đang xem xét',
+        };
+    }
 }
 
-function status_badge(string $status): string
-{
-    return match ($status) {
-        'approved' => 'success',
-        'rejected' => 'danger',
-        default => 'warning',
-    };
+if (!function_exists('status_badge')) {
+    function status_badge(string $status): string
+    {
+        return match ($status) {
+            'approved' => 'success',
+            'rejected' => 'danger',
+            default => 'warning',
+        };
+    }
 }
+
+function get_site_logo(): string
+{
+    require_once __DIR__ . '/editable.php';
+    $contents = editable_contents();
+    return $contents['site_logo'] ?? 'assets/images/cit/logoclb.png';
+}
+
+function get_logo_url(string $baseDir = ''): string
+{
+    $logo = get_site_logo();
+    if ($baseDir !== '' && !preg_match('/^(https?:|\/)/', $logo)) {
+        return $baseDir . $logo;
+    }
+    return $logo;
+}
+
+function get_hero_bg(): string
+{
+    require_once __DIR__ . '/editable.php';
+    $contents = editable_contents();
+    return $contents['hero_bg'] ?? 'assets/images/cit/cit-cover.webp';
+}
+
+function hex_to_rgb(string $hex): string
+{
+    $hex = ltrim($hex, '#');
+    if (strlen($hex) === 3) {
+        $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+        $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+        $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
+    } else {
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+    }
+    return "{$r}, {$g}, {$b}";
+}
+

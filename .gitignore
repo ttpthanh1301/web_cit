@@ -1,4 +1,32 @@
-/vendor/
-/.env
-/.DS_Store
-composer.phar
+# Cấu hình môi trường nhạy cảm (Chứa mật khẩu Database...)
+.env
+
+# Dependencies quản lý bởi Composer
+vendor/
+
+# Thư mục cache tĩnh (Bỏ qua toàn bộ nội dung trừ file .htaccess để bảo mật)
+cache/*
+!cache/.htaccess
+
+# Thư mục chứa ảnh admin upload (Logo mới, banner mới...)
+uploads/*
+!uploads/.gitkeep
+
+# Logs lỗi hệ thống
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Các tệp tin tạm và tệp của hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Cấu hình của trình soạn thảo IDE cá nhân
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

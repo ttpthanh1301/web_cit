@@ -18,22 +18,26 @@ function format_submission_value(?string $value, string $fieldType): string
     return $value;
 }
 
-function status_label(string $status): string
-{
-    return match ($status) {
-        'approved' => 'Đã duyệt',
-        'rejected' => 'Từ chối',
-        default => 'Chờ duyệt',
-    };
+if (!function_exists('status_label')) {
+    function status_label(string $status): string
+    {
+        return match ($status) {
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Từ chối',
+            default => 'Chờ duyệt',
+        };
+    }
 }
 
-function status_badge(string $status): string
-{
-    return match ($status) {
-        'approved' => 'success',
-        'rejected' => 'danger',
-        default => 'warning text-dark',
-    };
+if (!function_exists('status_badge')) {
+    function status_badge(string $status): string
+    {
+        return match ($status) {
+            'approved' => 'success',
+            'rejected' => 'danger',
+            default => 'warning text-dark',
+        };
+    }
 }
 
 function valid_date(string $date): bool

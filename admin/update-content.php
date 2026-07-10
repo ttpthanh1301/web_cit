@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/editable.php';
+require_once __DIR__ . '/../includes/page-cache.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -27,14 +29,32 @@ if (empty($csrfToken) || !hash_equals(csrf_token(), $csrfToken)) {
 }
 
 // 3. Đọc dữ liệu JSON payload gửi lên
-$input = json_decode(file_get_contents('php://input'), true);
+$rawInput = file_get_contents('php://input', false, null, 0, 20000);
+if (!is_string($rawInput) || $rawInput === '') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Yêu cầu không hợp lệ: thiếu dữ liệu.']);
+    exit;
+}
+
+$input = json_decode($rawInput, true);
+if (!is_array($input)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'JSON không hợp lệ.']);
+    exit;
+}
 $key = isset($input['key']) ? trim((string)$input['key']) : '';
 $value = isset($input['value']) ? trim((string)$input['value']) : '';
 $type = isset($input['type']) ? trim((string)$input['type']) : 'text';
 
-if ($key === '') {
+if ($key === '' || strlen($key) > 100 || !preg_match('/^[a-zA-Z0-9_.-]+$/', $key)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Yêu cầu không hợp lệ: thiếu key nội dung.']);
+    exit;
+}
+
+if (strlen($value) > 10000) {
+    http_response_code(422);
+    echo json_encode(['success' => false, 'message' => 'Nội dung quá dài.']);
     exit;
 }
 
@@ -48,9 +68,14 @@ if ($type === 'html') {
 }
 
 try {
-    // 5. Cập nhật vào DB. Dùng UPDATE vì hàm get_editable_content đã tự động INSERT khi hiển thị.
-    $stmt = $pdo->prepare('UPDATE page_contents SET content_value = ? WHERE content_key = ?');
-    $stmt->execute([$safeValue, $key]);
+    $stmt = $pdo->prepare(
+        'INSERT INTO page_contents (content_key, content_value)
+         VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE content_value = VALUES(content_value)'
+    );
+    $stmt->execute([$key, $safeValue]);
+    editable_cache_clear();
+    page_cache_clear('home-');
     
     echo json_encode([
         'success' => true,

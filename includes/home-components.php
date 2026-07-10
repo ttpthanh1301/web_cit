@@ -90,6 +90,7 @@ function render_cta_banner(array $data): void
 function render_gallery_grid(array $albums, string $activeAlbum): void
 {
     $current = $albums[$activeAlbum];
+    $hasMore = !empty($current['has_more']);
     ?>
     <nav class="album-tabs mb-4" aria-label="Chọn album">
         <ul class="nav gap-2 flex-wrap" id="galleryTabs" role="tablist">
@@ -134,5 +135,12 @@ function render_gallery_grid(array $albums, string $activeAlbum): void
         </figure>
         <?php endforeach; ?>
     </div>
+    <?php if ($hasMore): ?>
+        <div class="text-center mt-4">
+            <a class="btn btn-outline-primary" href="?album=<?= urlencode($activeAlbum) ?>&all=1#gallery">
+                Xem thêm album
+            </a>
+        </div>
+    <?php endif; ?>
     <?php
 }

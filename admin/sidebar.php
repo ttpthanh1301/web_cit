@@ -9,6 +9,7 @@ $membersPages = ['members.php', 'member-detail.php'];
     <div class="offcanvas-body d-flex flex-column p-3">
         <nav class="nav nav-pills flex-column gap-2" aria-label="Điều hướng quản trị">
             <a class="nav-link <?= $adminPage === 'dashboard.php' ? 'active' : '' ?>" href="dashboard.php">Tổng quan</a>
+            <a class="nav-link <?= $adminPage === 'settings.php' ? 'active' : '' ?>" href="settings.php">Cấu hình giao diện</a>
             <a class="nav-link <?= $adminPage === 'form-builder.php' ? 'active' : '' ?>" href="form-builder.php">Quản lý form</a>
             <a class="nav-link <?= in_array($adminPage, $membersPages, true) ? 'active' : '' ?>" href="members.php">Danh sách đăng ký</a>
             <a class="nav-link" href="../index.php" target="_blank" rel="noopener">Xem website</a>

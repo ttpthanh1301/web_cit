@@ -6,6 +6,13 @@ require_once __DIR__ . '/auth-check.php';
 $errors = [];
 $formData = ['id' => 0, 'field_label' => '', 'field_type' => 'text', 'options' => '', 'is_required' => 0];
 
+function clear_form_cache(): void
+{
+    @unlink(__DIR__ . '/../cache/form-fields.php');
+    require_once __DIR__ . '/../includes/page-cache.php';
+    page_cache_clear();
+}
+
 if (is_post()) {
     verify_csrf();
     $action = isset($_POST['action']) && is_string($_POST['action']) ? $_POST['action'] : '';
@@ -54,12 +61,14 @@ if (is_post()) {
                 $statement->execute(['label' => $label, 'type' => $type, 'options' => $encodedOptions, 'required' => $required, 'id' => $fieldId]);
                 set_flash('success', $statement->rowCount() ? 'Đã cập nhật field.' : 'Field không thay đổi hoặc không tồn tại.');
             }
+            clear_form_cache();
             redirect('form-builder.php');
         }
     } elseif ($action === 'delete' && $fieldId > 0) {
         $statement = $pdo->prepare('DELETE FROM form_fields WHERE id = :id');
         $statement->execute(['id' => $fieldId]);
         set_flash($statement->rowCount() ? 'success' : 'warning', $statement->rowCount() ? 'Đã xóa field và dữ liệu liên quan.' : 'Không tìm thấy field.');
+        clear_form_cache();
         redirect('form-builder.php');
     } elseif ($action === 'move' && $fieldId > 0) {
         $direction = ($_POST['direction'] ?? '') === 'up' ? -1 : 1;
@@ -81,6 +90,7 @@ if (is_post()) {
                 throw $exception;
             }
         }
+        clear_form_cache();
         redirect('form-builder.php');
     }
 }

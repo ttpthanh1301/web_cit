@@ -1,16 +1,16 @@
-/* ─── CIT Club — Gallery JS (Lightbox) ─────────────── */
+/* ─── CLB Công nghệ CIT — Gallery JS (Lightbox) ─────────────── */
 (function () {
     'use strict';
 
-    const overlay   = document.getElementById('lightbox');
-    const lightImg  = document.getElementById('lightboxImg');
-    const closeBtn  = document.getElementById('lightboxClose');
-    const prevBtn   = document.getElementById('lightboxPrev');
-    const nextBtn   = document.getElementById('lightboxNext');
+    const overlay = document.getElementById('lightbox');
+    const lightImg = document.getElementById('lightboxImg');
+    const closeBtn = document.getElementById('lightboxClose');
+    const prevBtn = document.getElementById('lightboxPrev');
+    const nextBtn = document.getElementById('lightboxNext');
 
     if (!overlay) return;
 
-    let items   = [];
+    let items = [];
     let current = 0;
 
     function collectItems() {
@@ -34,8 +34,8 @@
     function showImage() {
         const item = items[current];
         if (!item) return;
-        lightImg.src  = item.dataset.src;
-        lightImg.alt  = item.dataset.alt || '';
+        lightImg.src = item.dataset.src;
+        lightImg.alt = item.dataset.alt || '';
         prevBtn.style.display = items.length <= 1 ? 'none' : '';
         nextBtn.style.display = items.length <= 1 ? 'none' : '';
     }
@@ -69,9 +69,9 @@
             }
         }
         if (!overlay.classList.contains('active')) return;
-        if (e.key === 'Escape')      closeLightbox();
+        if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowRight') goNext();
-        if (e.key === 'ArrowLeft')  goPrev();
+        if (e.key === 'ArrowLeft') goPrev();
     });
 
     closeBtn?.addEventListener('click', closeLightbox);
