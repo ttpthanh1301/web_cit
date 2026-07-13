@@ -15,6 +15,7 @@ if (!headers_sent()) {
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($pageTitle) ?> | Quản trị <?= e(APP_NAME) ?></title>
     <link href="<?= e(versioned_asset('../assets/vendor/bootstrap/css/bootstrap.min.css')) ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(versioned_asset('../assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(versioned_asset('../assets/css/admin.min.css')) ?>">
 </head>
 <body class="admin-body">

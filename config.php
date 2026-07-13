@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 // Giữ mỗi PHP worker trong giới hạn an toàn cho hosting 512 MB RAM.
-ini_set('memory_limit', '96M');
-ini_set('max_execution_time', '30');
+ini_set('memory_limit', '128M');
+ini_set('max_execution_time', '60');
 ini_set('default_socket_timeout', '10');
 ini_set('log_errors', '1');
 ini_set('display_errors', (getenv('APP_ENV') ?: 'production') === 'local' ? '1' : '0');
@@ -67,12 +67,37 @@ function csrf_field(): string
     return '<input type="hidden" name="csrf_token" value="' . e(csrf_token()) . '">';
 }
 
+function ini_size_to_bytes(string $value): int
+{
+    $value = trim($value);
+    if ($value === '') {
+        return 0;
+    }
+
+    $number = (float) $value;
+    return match (strtolower(substr($value, -1))) {
+        'g' => (int) ($number * 1024 * 1024 * 1024),
+        'm' => (int) ($number * 1024 * 1024),
+        'k' => (int) ($number * 1024),
+        default => (int) $number,
+    };
+}
+
 function verify_csrf(): void
 {
     ensure_session_started();
     $token = isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
         ? $_POST['csrf_token']
         : '';
+
+    if ($token === '') {
+        $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+        $postLimit = ini_size_to_bytes((string) ini_get('post_max_size'));
+        if ($contentLength > 0 && $postLimit > 0 && $contentLength > $postLimit) {
+            http_response_code(413);
+            exit('Tổng dung lượng tải lên vượt giới hạn máy chủ. Vui lòng giảm kích thước hoặc tải ảnh theo từng nhóm nhỏ.');
+        }
+    }
 
     if (!hash_equals(csrf_token(), $token)) {
         http_response_code(419);

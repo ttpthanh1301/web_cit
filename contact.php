@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/page-cache.php';
+require_once __DIR__ . '/includes/editable.php';
 
 if (empty($_GET) && page_cache_start('contact', 3600)) {
     exit;
@@ -10,16 +11,24 @@ if (empty($_GET) && page_cache_start('contact', 3600)) {
 
 $pageTitle = 'Liên hệ';
 $pageScripts = ['assets/js/navbar.min.js'];
-$preloadImages = ['assets/images/cit/cit-cover.webp'];
+$contents = editable_contents();
+$contactHero = $contents['contact_hero_bg'] ?? 'assets/images/cit/cit-cover.webp';
+$contactHeroSmall = $contents['contact_hero_bg_small'] ?? $contactHero;
+$contactHeroWidth = max(1, (int) ($contents['contact_hero_bg_width'] ?? 1000));
+$contactHeroHeight = max(1, (int) ($contents['contact_hero_bg_height'] ?? 370));
+$contactHeroSmallWidth = max(1, (int) ($contents['contact_hero_bg_small_width'] ?? $contactHeroWidth));
+$contactHeroSrcset = $contactHeroSmall !== $contactHero ? $contactHeroSmall . ' ' . $contactHeroSmallWidth . 'w, ' . $contactHero . ' ' . $contactHeroWidth . 'w' : '';
+$preloadImages = [['href' => $contactHero, 'srcset' => $contactHeroSrcset, 'sizes' => '100vw']];
 
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="page-hero page-hero-about">
     <img class="page-hero-img"
-         src="assets/images/cit/cit-cover.webp"
+         src="<?= e($contactHeroSmall) ?>"
+         <?= $contactHeroSrcset !== '' ? 'srcset="' . e($contactHeroSrcset) . '" sizes="100vw"' : '' ?>
          alt=""
-         width="1000"
-         height="370"
+         width="<?= $contactHeroWidth ?>"
+         height="<?= $contactHeroHeight ?>"
          fetchpriority="high"
          decoding="async"
          aria-hidden="true">

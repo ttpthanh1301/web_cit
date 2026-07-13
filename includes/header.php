@@ -28,7 +28,16 @@ if ($isPublicGet && !headers_sent()) {
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
     <?php foreach ($preloadImages as $image): ?>
-        <link rel="preload" as="image" href="<?= e((string) $image) ?>" fetchpriority="high">
+        <?php if (is_array($image)): ?>
+            <link rel="preload"
+                  as="image"
+                  href="<?= e((string) ($image['href'] ?? '')) ?>"
+                  <?= !empty($image['srcset']) ? 'imagesrcset="' . e((string) $image['srcset']) . '"' : '' ?>
+                  <?= !empty($image['sizes']) ? 'imagesizes="' . e((string) $image['sizes']) . '"' : '' ?>
+                  fetchpriority="high">
+        <?php else: ?>
+            <link rel="preload" as="image" href="<?= e((string) $image) ?>" fetchpriority="high">
+        <?php endif; ?>
     <?php endforeach; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +53,20 @@ if ($isPublicGet && !headers_sent()) {
     $secondaryColor = $contents['theme_secondary_color'] ?? '#06b6d4';
     $accentColor = $contents['theme_accent_color'] ?? '#f97316';
     $primaryRgb = hex_to_rgb($primaryColor);
+    $contentWidth = in_array($contents['layout_content_width'] ?? '', ['1140px', '1200px', '1320px'], true)
+        ? $contents['layout_content_width']
+        : '1320px';
+    $cardRadius = in_array($contents['layout_card_radius'] ?? '', ['8px', '12px', '16px'], true)
+        ? $contents['layout_card_radius']
+        : '16px';
+    $baseFontSize = in_array($contents['layout_base_font_size'] ?? '', ['15px', '16px', '17px'], true)
+        ? $contents['layout_base_font_size']
+        : '16px';
+    $sectionSpacing = match ($contents['layout_section_spacing'] ?? 'balanced') {
+        'compact' => 'clamp(1.4rem, 2.5vw, 2rem)',
+        'airy' => 'clamp(2.5rem, 5vw, 4.5rem)',
+        default => 'clamp(1.75rem, 3.5vw, 2.5rem)',
+    };
     ?>
     <style>
     :root {
@@ -51,6 +74,12 @@ if ($isPublicGet && !headers_sent()) {
         --club-primary-rgb: <?= e($primaryRgb) ?>;
         --club-secondary: <?= e($secondaryColor) ?>;
         --club-accent: <?= e($accentColor) ?>;
+        --club-gradient: linear-gradient(135deg, <?= e($primaryColor) ?> 0%, <?= e($secondaryColor) ?> 100%);
+        --club-gradient-h: linear-gradient(90deg, <?= e($primaryColor) ?> 0%, <?= e($secondaryColor) ?> 100%);
+        --site-content-width: <?= e($contentWidth) ?>;
+        --site-font-size: <?= e($baseFontSize) ?>;
+        --site-section-space: <?= e($sectionSpacing) ?>;
+        --radius-card: <?= e($cardRadius) ?>;
     }
     </style>
     <?php foreach ($pageCss as $css): ?>

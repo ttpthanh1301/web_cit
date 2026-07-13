@@ -22,6 +22,34 @@ require_once __DIR__ . '/includes/home-components.php';
 // Tải cấu hình động
 $contents = editable_contents();
 $heroBg = get_hero_bg();
+$heroBgSmall = $contents['hero_bg_small'] ?? $heroBg;
+$heroBgWidth = max(1, (int) ($contents['hero_bg_width'] ?? 1000));
+$heroBgHeight = max(1, (int) ($contents['hero_bg_height'] ?? 370));
+$heroBgSmallWidth = max(1, (int) ($contents['hero_bg_small_width'] ?? $heroBgWidth));
+$heroSlides = [[
+    'full' => $heroBg,
+    'small' => $heroBgSmall,
+    'width' => $heroBgWidth,
+    'height' => $heroBgHeight,
+    'small_width' => $heroBgSmallWidth,
+]];
+for ($slideIndex = 2; $slideIndex <= 5; $slideIndex++) {
+    $slideKey = 'hero_slide_' . $slideIndex . '_bg';
+    if (empty($contents[$slideKey])) {
+        continue;
+    }
+
+    $slideFull = $contents[$slideKey];
+    $slideSmall = $contents[$slideKey . '_small'] ?? $slideFull;
+    $slideWidth = max(1, (int) ($contents[$slideKey . '_width'] ?? 1920));
+    $heroSlides[] = [
+        'full' => $slideFull,
+        'small' => $slideSmall,
+        'width' => $slideWidth,
+        'height' => max(1, (int) ($contents[$slideKey . '_height'] ?? 1080)),
+        'small_width' => max(1, (int) ($contents[$slideKey . '_small_width'] ?? $slideWidth)),
+    ];
+}
 $heroCtaText = $contents['hero_cta_text'] ?? 'Xem tuyển thành viên';
 $heroCtaUrl = $contents['hero_cta_url'] ?? 'recruitment.php';
 $heroExploreText = $contents['hero_explore_text'] ?? 'Khám phá fanpage';
@@ -56,7 +84,17 @@ $pageScripts = [
     'assets/js/navbar.min.js',
     'assets/js/gallery.min.js',
 ];
-$preloadImages = [$heroBg];
+if (count($heroSlides) > 1) {
+    $pageScripts[] = 'assets/js/hero-slider.min.js';
+}
+$heroSrcset = $heroBgSmall !== $heroBg
+    ? $heroBgSmall . ' ' . $heroBgSmallWidth . 'w, ' . $heroBg . ' ' . $heroBgWidth . 'w'
+    : '';
+$preloadImages = [[
+    'href' => $heroBg,
+    'srcset' => $heroSrcset,
+    'sizes' => '100vw',
+]];
 $enableInlineEditing = isset($_COOKIE['cit_admin_session']) && $_COOKIE['cit_admin_session'] === '1';
 $includeCsrfMeta = $enableInlineEditing;
 
@@ -83,14 +121,35 @@ foreach ($sectionsList as $sec) {
         case 'hero':
             ?>
             <section class="hero">
-                <img class="hero-bg-img"
-                     src="<?= e($heroBg) ?>"
-                     alt=""
-                     width="1000"
-                     height="370"
-                     fetchpriority="high"
-                     decoding="async"
-                     aria-hidden="true">
+                <div class="hero-media" <?= count($heroSlides) > 1 ? 'data-hero-slider data-interval="3000"' : '' ?>>
+                    <?php foreach ($heroSlides as $slidePosition => $slide): ?>
+                        <?php
+                        $slideSrcset = $slide['small'] !== $slide['full']
+                            ? $slide['small'] . ' ' . $slide['small_width'] . 'w, ' . $slide['full'] . ' ' . $slide['width'] . 'w'
+                            : '';
+                        ?>
+                        <img class="hero-bg-img hero-slide <?= $slidePosition === 0 ? 'is-active' : '' ?>"
+                             <?= $slidePosition === 0 ? 'src="' . e($slide['small']) . '"' : 'data-src="' . e($slide['small']) . '"' ?>
+                             <?= $slideSrcset !== '' ? ($slidePosition === 0 ? 'srcset' : 'data-srcset') . '="' . e($slideSrcset) . '" sizes="100vw"' : '' ?>
+                             alt=""
+                             width="<?= (int) $slide['width'] ?>"
+                             height="<?= (int) $slide['height'] ?>"
+                             <?= $slidePosition === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
+                             decoding="async"
+                             aria-hidden="true">
+                    <?php endforeach; ?>
+                    <?php if (count($heroSlides) > 1): ?>
+                        <div class="hero-slider-dots" aria-label="Chọn ảnh banner">
+                            <?php foreach ($heroSlides as $slidePosition => $_slide): ?>
+                                <button type="button"
+                                        class="<?= $slidePosition === 0 ? 'is-active' : '' ?>"
+                                        data-slide-to="<?= $slidePosition ?>"
+                                        aria-label="Ảnh banner <?= $slidePosition + 1 ?>"
+                                        aria-current="<?= $slidePosition === 0 ? 'true' : 'false' ?>"></button>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <div class="container">
                     <div class="hero-content">
                         <span class="hero-kicker">

@@ -4,7 +4,8 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.1",
+        "phpmailer/phpmailer": "^7.1"
     },
     "config": {
         "optimize-autoloader": true,

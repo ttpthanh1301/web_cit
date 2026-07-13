@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/data/club-content.php';
 require_once __DIR__ . '/includes/page-cache.php';
+require_once __DIR__ . '/includes/editable.php';
 
 if (empty($_GET) && page_cache_start('activities', 3600)) {
     exit;
@@ -11,16 +12,24 @@ if (empty($_GET) && page_cache_start('activities', 3600)) {
 
 $pageTitle = 'Hoạt động';
 $pageScripts = ['assets/js/navbar.min.js'];
-$preloadImages = ['assets/images/cit/albums/aeternum-hackerrank.webp'];
+$contents = editable_contents();
+$activitiesHero = $contents['activities_hero_bg'] ?? 'assets/images/cit/albums/aeternum-hackerrank.webp';
+$activitiesHeroSmall = $contents['activities_hero_bg_small'] ?? 'assets/images/cit/thumbs/albums/aeternum-hackerrank.webp';
+$activitiesHeroWidth = max(1, (int) ($contents['activities_hero_bg_width'] ?? 843));
+$activitiesHeroHeight = max(1, (int) ($contents['activities_hero_bg_height'] ?? 674));
+$activitiesHeroSmallWidth = max(1, (int) ($contents['activities_hero_bg_small_width'] ?? 480));
+$activitiesHeroSrcset = $activitiesHeroSmall !== $activitiesHero ? $activitiesHeroSmall . ' ' . $activitiesHeroSmallWidth . 'w, ' . $activitiesHero . ' ' . $activitiesHeroWidth . 'w' : '';
+$preloadImages = [['href' => $activitiesHero, 'srcset' => $activitiesHeroSrcset, 'sizes' => '100vw']];
 
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="page-hero page-hero-activities">
     <img class="page-hero-img"
-         src="assets/images/cit/albums/aeternum-hackerrank.webp"
+         src="<?= e($activitiesHeroSmall) ?>"
+         <?= $activitiesHeroSrcset !== '' ? 'srcset="' . e($activitiesHeroSrcset) . '" sizes="100vw"' : '' ?>
          alt=""
-         width="843"
-         height="674"
+         width="<?= $activitiesHeroWidth ?>"
+         height="<?= $activitiesHeroHeight ?>"
          fetchpriority="high"
          decoding="async"
          aria-hidden="true">

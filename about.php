@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/data/club-content.php';
 require_once __DIR__ . '/includes/page-cache.php';
+require_once __DIR__ . '/includes/editable.php';
 
 if (empty($_GET) && page_cache_start('about', 3600)) {
     exit;
@@ -11,16 +12,24 @@ if (empty($_GET) && page_cache_start('about', 3600)) {
 
 $pageTitle = 'Giới thiệu';
 $pageScripts = ['assets/js/navbar.min.js'];
-$preloadImages = ['assets/images/cit/cit-cover.webp'];
+$contents = editable_contents();
+$aboutHero = $contents['about_hero_bg'] ?? 'assets/images/cit/cit-cover.webp';
+$aboutHeroSmall = $contents['about_hero_bg_small'] ?? $aboutHero;
+$aboutHeroWidth = max(1, (int) ($contents['about_hero_bg_width'] ?? 1000));
+$aboutHeroHeight = max(1, (int) ($contents['about_hero_bg_height'] ?? 370));
+$aboutHeroSmallWidth = max(1, (int) ($contents['about_hero_bg_small_width'] ?? $aboutHeroWidth));
+$aboutHeroSrcset = $aboutHeroSmall !== $aboutHero ? $aboutHeroSmall . ' ' . $aboutHeroSmallWidth . 'w, ' . $aboutHero . ' ' . $aboutHeroWidth . 'w' : '';
+$preloadImages = [['href' => $aboutHero, 'srcset' => $aboutHeroSrcset, 'sizes' => '100vw']];
 
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="page-hero page-hero-about">
     <img class="page-hero-img"
-         src="assets/images/cit/cit-cover.webp"
+         src="<?= e($aboutHeroSmall) ?>"
+         <?= $aboutHeroSrcset !== '' ? 'srcset="' . e($aboutHeroSrcset) . '" sizes="100vw"' : '' ?>
          alt=""
-         width="1000"
-         height="370"
+         width="<?= $aboutHeroWidth ?>"
+         height="<?= $aboutHeroHeight ?>"
          fetchpriority="high"
          decoding="async"
          aria-hidden="true">

@@ -31,17 +31,21 @@ function minify_js(string $js): string
 
 $workspace = dirname(__DIR__);
 
-// Minify CSS
-$cssPath = $workspace . '/assets/css/app.css';
-$minCssPath = $workspace . '/assets/css/app.min.css';
-if (is_file($cssPath)) {
+// Minify public and admin CSS.
+foreach (['app', 'admin'] as $stylesheet) {
+    $cssPath = $workspace . '/assets/css/' . $stylesheet . '.css';
+    $minCssPath = $workspace . '/assets/css/' . $stylesheet . '.min.css';
+    if (!is_file($cssPath)) {
+        continue;
+    }
+
     $minified = minify_css(file_get_contents($cssPath));
     file_put_contents($minCssPath, $minified);
-    echo "Minified CSS: " . filesize($cssPath) . " bytes -> " . filesize($minCssPath) . " bytes\n";
+    echo "Minified CSS {$stylesheet}: " . filesize($cssPath) . " bytes -> " . filesize($minCssPath) . " bytes\n";
 }
 
 // Minify JS
-foreach (['editable', 'gallery', 'navbar', 'counter', 'admin-form-builder'] as $script) {
+foreach (['editable', 'gallery', 'navbar', 'counter', 'admin-form-builder', 'admin-settings', 'admin-mail-settings', 'admin-members-email', 'hero-slider'] as $script) {
     $jsPath = $workspace . '/assets/js/' . $script . '.js';
     $minJsPath = $workspace . '/assets/js/' . $script . '.min.js';
     if (is_file($jsPath)) {

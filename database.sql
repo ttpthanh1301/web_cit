@@ -130,6 +130,68 @@ INSERT INTO `form_submissions` VALUES (3,'2026-07-10 21:30:48','pending'),(1,'20
 UNLOCK TABLES;
 
 --
+-- Table structure for table `email_batches`
+--
+
+DROP TABLE IF EXISTS `email_batches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `email_batches` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `message_type` enum('approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subject_template` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `body_template` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reply_to` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `selection_summary` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `selected_count` int unsigned NOT NULL DEFAULT '0',
+  `duplicate_count` int unsigned NOT NULL DEFAULT '0',
+  `processed_count` int unsigned NOT NULL DEFAULT '0',
+  `sent_count` int unsigned NOT NULL DEFAULT '0',
+  `failed_count` int unsigned NOT NULL DEFAULT '0',
+  `skipped_count` int unsigned NOT NULL DEFAULT '0',
+  `status` enum('pending','processing','completed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `created_by` int unsigned DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completed_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_email_batches_status_created` (`status`,`created_at`),
+  CONSTRAINT `fk_email_batches_admin` FOREIGN KEY (`created_by`) REFERENCES `admin` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `email_deliveries`
+--
+
+DROP TABLE IF EXISTS `email_deliveries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `email_deliveries` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `batch_id` bigint unsigned NOT NULL,
+  `submission_id` bigint unsigned NOT NULL,
+  `message_type` enum('approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `recipient_email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recipient_name` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `body_html` text COLLATE utf8mb4_unicode_ci,
+  `status` enum('pending','sending','sent','failed','skipped') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `attempts` smallint unsigned NOT NULL DEFAULT '0',
+  `last_error` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_attempt_at` datetime DEFAULT NULL,
+  `sent_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_delivery_submission_type` (`submission_id`,`message_type`),
+  KEY `idx_email_deliveries_batch_status` (`batch_id`,`status`,`id`),
+  CONSTRAINT `fk_email_deliveries_batch` FOREIGN KEY (`batch_id`) REFERENCES `email_batches` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_email_deliveries_submission` FOREIGN KEY (`submission_id`) REFERENCES `form_submissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `page_contents`
 --
 
@@ -143,7 +205,7 @@ CREATE TABLE `page_contents` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `content_key` (`content_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +214,7 @@ CREATE TABLE `page_contents` (
 
 LOCK TABLES `page_contents` WRITE;
 /*!40000 ALTER TABLE `page_contents` DISABLE KEYS */;
-INSERT INTO `page_contents` VALUES (1,'home_title','Cit','2026-07-10 11:29:34'),(2,'home_desc','Đây là điểm đến trực tuyến của fanpage chính thức CIT, nơi chúng tôi chọn lọc hình ảnh...','2026-07-10 10:03:46'),(3,'home_title_current','CIT Club — Cộng đồng công nghệ sinh viên TMU','2026-07-10 12:57:57'),(4,'home_desc_current','CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại, dưới sự quản lý của Khoa Công nghệ số ứng dụng. Website chọn lọc thông tin công khai từ fanpage để giới thiệu hoạt động, thành tích và hành trình tuyển thành viên của CLB.','2026-07-10 12:57:57'),(5,'theme_primary_color','#3b82f6','2026-07-10 14:43:29'),(6,'theme_secondary_color','#06b6d4','2026-07-10 14:43:29'),(7,'theme_accent_color','#f97316','2026-07-10 14:43:29'),(8,'site_logo','uploads/img_6a51093d92a1c0.73440216.webp','2026-07-10 15:01:17'),(9,'hero_bg','assets/images/cit/cit-cover.webp','2026-07-10 14:43:29'),(10,'hero_cta_text','Xem tuyển thành viên','2026-07-10 14:43:29'),(11,'hero_cta_url','recruitment.php','2026-07-10 14:43:29'),(12,'hero_explore_text','Khám phá fanpage','2026-07-10 14:43:29'),(13,'hero_explore_url','https://www.facebook.com/clbcongnghe.cit','2026-07-10 14:43:29'),(16,'recruitment_form_closed','0','2026-07-13 00:00:00'),(17,'recruitment_closed_message','CIT hiện đã đóng form tuyển thành viên. Hẹn gặp bạn ở đợt tuyển tiếp theo.','2026-07-13 00:00:00');
+INSERT INTO `page_contents` VALUES (1,'home_title','Cit','2026-07-10 11:29:34'),(2,'home_desc','Đây là điểm đến trực tuyến của fanpage chính thức CIT, nơi chúng tôi chọn lọc hình ảnh...','2026-07-10 10:03:46'),(3,'home_title_current','CIT Club — Cộng đồng công nghệ sinh viên TMU','2026-07-10 12:57:57'),(4,'home_desc_current','CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại, dưới sự quản lý của Khoa Công nghệ số ứng dụng. Website chọn lọc thông tin công khai từ fanpage để giới thiệu hoạt động, thành tích và hành trình tuyển thành viên của CLB.','2026-07-10 12:57:57'),(5,'theme_primary_color','#3b82f6','2026-07-10 14:43:29'),(6,'theme_secondary_color','#06b6d4','2026-07-10 14:43:29'),(7,'theme_accent_color','#f97316','2026-07-10 14:43:29'),(8,'site_logo','uploads/img_6a51093d92a1c0.73440216.webp','2026-07-10 15:01:17'),(9,'hero_bg','assets/images/cit/cit-cover.webp','2026-07-10 14:43:29'),(10,'hero_cta_text','Xem tuyển thành viên','2026-07-10 14:43:29'),(11,'hero_cta_url','recruitment.php','2026-07-10 14:43:29'),(12,'hero_explore_text','Khám phá fanpage','2026-07-10 14:43:29'),(13,'hero_explore_url','https://www.facebook.com/clbcongnghe.cit','2026-07-10 14:43:29'),(16,'recruitment_form_closed','0','2026-07-13 00:00:00'),(17,'recruitment_closed_message','CIT hiện đã đóng form tuyển thành viên. Hẹn gặp bạn ở đợt tuyển tiếp theo.','2026-07-13 00:00:00'),(18,'mail_sender_name','CLB Công nghệ CIT','2026-07-13 00:00:00'),(19,'mail_reply_to','','2026-07-13 00:00:00'),(20,'mail_approved_subject','Chúc mừng {{ho_ten}} đã trở thành thành viên CIT','2026-07-13 00:00:00'),(21,'mail_approved_body','<p>Xin chào <strong>{{ho_ten}}</strong>,</p><p>Chúc mừng bạn đã vượt qua đợt tuyển thành viên của <strong>{{ten_clb}}</strong>.</p><p>Chúng mình rất vui được đồng hành cùng bạn trong những hoạt động sắp tới.</p><p>Trân trọng,<br><strong>{{ten_clb}}</strong></p>','2026-07-13 00:00:00'),(22,'mail_rejected_subject','Kết quả tuyển thành viên {{ten_clb}}','2026-07-13 00:00:00'),(23,'mail_rejected_body','<p>Xin chào <strong>{{ho_ten}}</strong>,</p><p>Cảm ơn bạn đã dành thời gian tham gia đợt tuyển thành viên của <strong>{{ten_clb}}</strong>.</p><p>Rất tiếc trong đợt này chúng mình chưa thể đồng hành cùng bạn. Hy vọng sẽ được gặp lại bạn trong những cơ hội tiếp theo.</p><p>Trân trọng,<br><strong>{{ten_clb}}</strong></p>','2026-07-13 00:00:00');
 /*!40000 ALTER TABLE `page_contents` ENABLE KEYS */;
 UNLOCK TABLES;
 

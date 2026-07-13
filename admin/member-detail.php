@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth-check.php';
+require_once __DIR__ . '/../includes/email.php';
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?: 0;
 $statement = $pdo->prepare('SELECT id, submitted_at, status FROM form_submissions WHERE id = :id');
@@ -23,7 +24,19 @@ $valueStatement = $pdo->prepare(
 );
 $valueStatement->execute(['submission_id' => $id]);
 $answers = $valueStatement->fetchAll();
+$emailDeliveries = [];
+try {
+    $emailStatement = $pdo->prepare(
+        'SELECT id, message_type, recipient_email, status, attempts, last_error, sent_at, last_attempt_at
+         FROM email_deliveries WHERE submission_id = :submission_id ORDER BY id DESC'
+    );
+    $emailStatement->execute(['submission_id' => $id]);
+    $emailDeliveries = $emailStatement->fetchAll();
+} catch (Throwable) {
+    // Email migration may not have been applied yet.
+}
 $pageTitle = 'Chi tiết đơn #' . $id;
+$adminScripts = ['../assets/js/admin-members-email.min.js'];
 require __DIR__ . '/header.php';
 ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -34,7 +47,9 @@ require __DIR__ . '/header.php';
     <div class="col-lg-8"><section class="content-card"><h2 class="h5 fw-bold mb-4">Câu trả lời</h2><?php if (!$answers): ?><p class="text-secondary mb-0">Form hiện không có field.</p><?php else: ?><dl class="row mb-0"><?php foreach ($answers as $answer): ?><dt class="col-sm-4 mb-1"><?= e($answer['field_label']) ?></dt><dd class="col-sm-8 mb-4 text-break"><?= nl2br(e(format_submission_value($answer['value'], $answer['field_type']))) ?></dd><?php endforeach; ?></dl><?php endif; ?></section></div>
     <div class="col-lg-4"><section class="content-card"><h2 class="h5 fw-bold mb-3">Xử lý đơn</h2>
         <form method="post" action="member-approve.php" class="d-grid gap-2 mb-4"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><input type="hidden" name="return" value="<?= e($returnQuery) ?>"><button class="btn btn-success" name="status" value="approved" type="submit">Duyệt đơn</button><button class="btn btn-warning" name="status" value="pending" type="submit">Chuyển về chờ duyệt</button><button class="btn btn-outline-danger" name="status" value="rejected" type="submit">Từ chối đơn</button></form>
+        <?php if ($emailDeliveries): ?><div class="member-email-history"><h3>Email đã tạo</h3><?php foreach ($emailDeliveries as $delivery): ?><article><div><span class="badge text-bg-<?= $delivery['message_type'] === 'approved' ? 'success' : 'danger' ?>"><?= $delivery['message_type'] === 'approved' ? 'Đạt' : 'Không đạt' ?></span><strong data-delivery-status><?= match ($delivery['status']) { 'sent' => 'Đã gửi', 'failed' => 'Gửi lỗi', 'skipped' => 'Đã bỏ qua', 'sending' => 'Đang gửi', default => 'Chờ gửi' } ?></strong></div><?php if ($delivery['recipient_email']): ?><small><?= e($delivery['recipient_email']) ?></small><?php endif; ?><?php if ($delivery['last_error']): ?><p><?= e($delivery['last_error']) ?></p><?php endif; ?><?php if (in_array($delivery['status'], ['failed', 'skipped'], true)): ?><button class="btn btn-sm btn-outline-primary" type="button" data-retry-delivery="<?= (int) $delivery['id'] ?>"><i class="bi bi-arrow-clockwise"></i> Gửi lại</button><?php endif; ?></article><?php endforeach; ?></div><?php else: ?><p class="small text-secondary">Chưa tạo email cho hồ sơ này. Email chỉ được tạo từ thao tác chọn trong danh sách.</p><?php endif; ?>
         <hr><form method="post" action="member-delete.php" onsubmit="return confirm('Xóa vĩnh viễn đơn đăng ký này?');"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><input type="hidden" name="return" value="<?= e($returnQuery) ?>"><button class="btn btn-danger w-100" type="submit">Xóa đơn</button></form>
     </section></div>
 </div>
+<input type="hidden" id="email-csrf-token" value="<?= e(csrf_token()) ?>">
 <?php require __DIR__ . '/footer.php'; ?>

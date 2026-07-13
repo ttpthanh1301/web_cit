@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/form-fields.php';
+require_once __DIR__ . '/includes/editable.php';
 
 ensure_session_started();
 
@@ -139,9 +140,28 @@ if (is_post()) {
 $pageTitle = 'Tuyển thành viên';
 $pageScripts = ['assets/js/navbar.min.js'];
 $includeCsrfMeta = true;
+$contents = editable_contents();
+$recruitmentHero = $contents['recruitment_hero_bg'] ?? 'assets/images/cit/cit-cover.webp';
+$recruitmentHeroSmall = $contents['recruitment_hero_bg_small'] ?? $recruitmentHero;
+$recruitmentHeroWidth = max(1, (int) ($contents['recruitment_hero_bg_width'] ?? 1000));
+$recruitmentHeroHeight = max(1, (int) ($contents['recruitment_hero_bg_height'] ?? 370));
+$recruitmentHeroSmallWidth = max(1, (int) ($contents['recruitment_hero_bg_small_width'] ?? $recruitmentHeroWidth));
+$recruitmentHeroSrcset = $recruitmentHeroSmall !== $recruitmentHero
+    ? $recruitmentHeroSmall . ' ' . $recruitmentHeroSmallWidth . 'w, ' . $recruitmentHero . ' ' . $recruitmentHeroWidth . 'w'
+    : '';
+$preloadImages = [['href' => $recruitmentHero, 'srcset' => $recruitmentHeroSrcset, 'sizes' => '100vw']];
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="recruitment-hero">
+    <img class="recruitment-hero-img"
+         src="<?= e($recruitmentHeroSmall) ?>"
+         <?= $recruitmentHeroSrcset !== '' ? 'srcset="' . e($recruitmentHeroSrcset) . '" sizes="100vw"' : '' ?>
+         alt=""
+         width="<?= $recruitmentHeroWidth ?>"
+         height="<?= $recruitmentHeroHeight ?>"
+         fetchpriority="high"
+         decoding="async"
+         aria-hidden="true">
     <div class="container text-center">
         <p class="text-uppercase fw-bold small opacity-75 mb-2">Tuyển thành viên</p>
         <h1 class="display-4 fw-bold">Tuyển thành viên CIT</h1>
