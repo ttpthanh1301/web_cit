@@ -17,18 +17,22 @@ function render_feature_card(array $feature): void
 
 function render_activity_card(array $activity): void
 {
-    $image = (string) ($activity['thumb'] ?? $activity['image']);
+    $thumb = (string) ($activity['thumb'] ?? $activity['image']);
+    $full = (string) $activity['image'];
+    $srcset = $thumb !== $full
+        ? $thumb . ' 480w, ' . $full . ' ' . (int) $activity['width'] . 'w'
+        : null;
     ?>
     <article class="activity-card">
         <div class="activity-card-img">
             <img<?= asset_attrs([
-                'src' => $image,
+                'src' => $thumb,
                 'alt' => $activity['alt'],
                 'width' => $activity['width'],
                 'height' => $activity['height'],
                 'loading' => $activity['loading'] ?? 'lazy',
                 'decoding' => 'async',
-                'srcset' => $image . ' 480w',
+                'srcset' => $srcset,
                 'sizes' => '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
             ]) ?>>
         </div>
@@ -115,6 +119,10 @@ function render_gallery_grid(array $albums, string $activeAlbum): void
             $altText = (string) $current['desc'];
             $full = is_array($photo) ? (string) ($photo['full'] ?? $photo['thumb'] ?? '') : (string) $photo;
             $thumb = is_array($photo) ? (string) ($photo['thumb'] ?? $full) : (string) $photo;
+            $fullWidth = is_array($photo) ? max(480, (int) ($photo['width'] ?? 1000)) : 1000;
+            $imageSizes = $idx === 0
+                ? '(max-width: 767px) 100vw, (max-width: 991px) 66vw, 50vw'
+                : '(max-width: 480px) 50vw, (max-width: 992px) 33vw, 25vw';
         ?>
         <figure class="gallery-item mb-0"
                 data-index="<?= (int) $idx ?>"
@@ -124,12 +132,13 @@ function render_gallery_grid(array $albums, string $activeAlbum): void
                 tabindex="0"
                 aria-label="Xem ảnh <?= (int) $idx + 1 ?> - <?= e($altText) ?>">
             <img src="<?= e($thumb) ?>"
+                 srcset="<?= e($thumb) ?> 480w, <?= e($full) ?> <?= $fullWidth ?>w"
                  alt="<?= e($altText) ?> - ảnh <?= (int) $idx + 1 ?>"
                  width="480"
                  height="360"
                  loading="<?= $idx === 0 ? 'eager' : 'lazy' ?>"
                  decoding="async"
-                 sizes="(max-width: 480px) 50vw, (max-width: 992px) 33vw, 25vw">
+                 sizes="<?= e($imageSizes) ?>">
             <div class="gallery-item-overlay">
                 <span><i class="bi bi-zoom-in me-1"></i>Phóng to</span>
             </div>

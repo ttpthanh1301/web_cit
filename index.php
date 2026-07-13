@@ -6,8 +6,13 @@ require_once __DIR__ . '/includes/page-cache.php';
 require_once __DIR__ . '/includes/editable.php';
 
 $requestedAlbum = $_GET['album'] ?? 'aeternum';
-$cacheAlbum = is_string($requestedAlbum) ? $requestedAlbum : 'aeternum';
-if (count($_GET) <= 1 && page_cache_start('home-v3-' . $cacheAlbum, 600)) {
+$cacheableAlbums = ['aeternum', 'birthday', 'httt', 'vinh-danh', 'tan-cu-nhan'];
+$cacheAlbum = is_string($requestedAlbum) && in_array($requestedAlbum, $cacheableAlbums, true)
+    ? $requestedAlbum
+    : 'aeternum';
+$cacheableRequest = empty($_GET)
+    || (count($_GET) === 1 && isset($_GET['album']) && $cacheAlbum === $requestedAlbum);
+if ($cacheableRequest && page_cache_start('home-v3-' . $cacheAlbum, 600)) {
     exit;
 }
 
@@ -31,10 +36,7 @@ try {
     } else {
         require_once __DIR__ . '/includes/db.php';
         $sectionsList = $pdo->query('SELECT section_key, is_visible FROM sections ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
-        if (!is_dir(dirname($cacheSectionsFile))) {
-            mkdir(dirname($cacheSectionsFile), 0755, true);
-        }
-        file_put_contents($cacheSectionsFile, '<?php return ' . var_export($sectionsList, true) . ';' . PHP_EOL, LOCK_EX);
+        write_php_cache($cacheSectionsFile, $sectionsList);
     }
 } catch (Throwable $e) {
     $sectionsList = [
@@ -218,7 +220,7 @@ foreach ($sectionsList as $sec) {
                             <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);"></div>
                             <span class="bento-card-badge position-relative" style="z-index: 2;"><i class="bi bi-award-fill me-1"></i>Thành tích</span>
                             <div class="bento-card-media bento-card-media-featured rounded-3 overflow-hidden position-relative">
-                                <img src="assets/images/cit/albums/nckh/giainhat_tmu.webp" alt="Giải Nhất TMU's Startup 2025">
+                                <img src="assets/images/cit/albums/nckh/giainhat_tmu.webp" alt="Giải Nhất TMU's Startup 2025" loading="lazy" decoding="async">
                             </div>
                             <div class="bento-card-content bento-card-content-featured position-relative" style="z-index: 2;">
                                 <h3 class="h3 fw-bold mb-2">Giải Nhất TMU's Startup 2025</h3>

@@ -26,6 +26,10 @@ $current = $albums[$activeAlbum];
         $altText = (string) $current['desc'];
         $full = is_array($photo) ? (string) ($photo['full'] ?? $photo['thumb'] ?? '') : (string) $photo;
         $thumb = is_array($photo) ? (string) ($photo['thumb'] ?? $full) : (string) $photo;
+        $fullWidth = is_array($photo) ? max(480, (int) ($photo['width'] ?? 1000)) : 1000;
+        $imageSizes = $idx === 0
+            ? '(max-width: 767px) 100vw, (max-width: 991px) 66vw, 50vw'
+            : '(max-width: 480px) 50vw, (max-width: 992px) 33vw, 25vw';
     ?>
     <figure class="gallery-item mb-0"
             data-index="<?= (int) $idx ?>"
@@ -35,12 +39,13 @@ $current = $albums[$activeAlbum];
             tabindex="0"
             aria-label="Xem ảnh <?= (int) $idx + 1 ?> - <?= e($altText) ?>">
         <img src="<?= e($thumb) ?>"
+             srcset="<?= e($thumb) ?> 480w, <?= e($full) ?> <?= $fullWidth ?>w"
              alt="<?= e($altText) ?> - ảnh <?= (int) $idx + 1 ?>"
              width="480"
              height="360"
              loading="<?= $idx === 0 ? 'eager' : 'lazy' ?>"
              decoding="async"
-             sizes="(max-width: 480px) 50vw, (max-width: 992px) 33vw, 25vw">
+             sizes="<?= e($imageSizes) ?>">
         <div class="gallery-item-overlay">
             <span><i class="bi bi-zoom-in me-1"></i>Phóng to</span>
         </div>

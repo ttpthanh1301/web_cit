@@ -3,6 +3,9 @@ $pageTitle = $pageTitle ?? 'Quản trị';
 $adminPage = basename($_SERVER['SCRIPT_NAME'] ?? 'dashboard.php');
 $adminScripts = $adminScripts ?? [];
 $flash = get_flash();
+if (!headers_sent()) {
+    header('Cache-Control: private, no-store');
+}
 ?>
 <!doctype html>
 <html lang="vi">
@@ -11,8 +14,8 @@ $flash = get_flash();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($pageTitle) ?> | Quản trị <?= e(APP_NAME) ?></title>
-    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/admin.min.css">
+    <link href="<?= e(versioned_asset('../assets/vendor/bootstrap/css/bootstrap.min.css')) ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(versioned_asset('../assets/css/admin.min.css')) ?>">
 </head>
 <body class="admin-body">
 <nav class="navbar navbar-dark admin-topbar sticky-top">

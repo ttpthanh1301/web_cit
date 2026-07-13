@@ -3,11 +3,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/form-fields.php';
-require_once __DIR__ . '/includes/page-cache.php';
-
-if (empty($_GET) && page_cache_start('recruitment', 3600)) {
-    exit;
-}
 
 ensure_session_started();
 
@@ -22,16 +17,14 @@ if (is_file($cacheFile)) {
          FROM form_fields
          ORDER BY sort_order ASC, id ASC'
     )->fetchAll();
-    if (!is_dir(dirname($cacheFile))) {
-        mkdir(dirname($cacheFile), 0755, true);
-    }
-    file_put_contents($cacheFile, '<?php return ' . var_export($fields, true) . ';' . PHP_EOL, LOCK_EX);
+    write_php_cache($cacheFile, $fields);
 }
 
 $errors = [];
 $answers = [];
 $isRecruitmentClosed = recruitment_form_closed();
 $closedMessage = recruitment_closed_message();
+$allowPublicCache = false;
 
 if (is_post()) {
     require_once __DIR__ . '/includes/db.php';
@@ -294,4 +287,3 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-<?php page_cache_end(); ?>

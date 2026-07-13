@@ -50,3 +50,8 @@ foreach (['editable', 'gallery', 'navbar', 'counter', 'admin-form-builder'] as $
         echo "Minified JS {$script}: " . filesize($jsPath) . " bytes -> " . filesize($minJsPath) . " bytes\n";
     }
 }
+
+// HTML cache chứa version cũ của CSS/JS, nên cần làm mới sau mỗi lần build.
+foreach (glob($workspace . '/cache/pages/*.html') ?: [] as $cachedPage) {
+    @unlink($cachedPage);
+}

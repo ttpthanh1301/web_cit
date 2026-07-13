@@ -6,11 +6,16 @@ $pageCss = $pageCss ?? [];
 $bodyClass = $bodyClass ?? '';
 $preloadImages = $preloadImages ?? [];
 $includeCsrfMeta = $includeCsrfMeta ?? false;
+$allowPublicCache = $allowPublicCache ?? true;
 // Cache tĩnh cho trang công khai (không POST, không admin)
 $isPublicGet = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET'
-    && strpos($currentPage, 'admin') === false;
+    && strpos($currentPage, 'admin') === false
+    && !isset($_COOKIE['cit_admin_session'])
+    && $allowPublicCache;
 if ($isPublicGet && !headers_sent()) {
     header('Cache-Control: public, max-age=300, stale-while-revalidate=600');
+} elseif (!headers_sent()) {
+    header('Cache-Control: private, no-store');
 }
 ?>
 <!doctype html>
@@ -28,9 +33,9 @@ if ($isPublicGet && !headers_sent()) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="assets/css/app.min.css">
+    <link href="<?= e(versioned_asset('assets/vendor/bootstrap/css/bootstrap.min.css')) ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(versioned_asset('assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css')) ?>">
+    <link rel="stylesheet" href="<?= e(versioned_asset('assets/css/app.min.css')) ?>">
     <?php
     require_once __DIR__ . '/helpers.php';
     require_once __DIR__ . '/editable.php';
@@ -49,7 +54,7 @@ if ($isPublicGet && !headers_sent()) {
     }
     </style>
     <?php foreach ($pageCss as $css): ?>
-        <link rel="stylesheet" href="<?= e((string) $css) ?>">
+        <link rel="stylesheet" href="<?= e(versioned_asset((string) $css)) ?>">
     <?php endforeach; ?>
     <?php if ($includeCsrfMeta): ?>
         <meta name="csrf-token" content="<?= csrf_token() ?>">

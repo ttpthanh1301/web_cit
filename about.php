@@ -46,7 +46,7 @@ require_once __DIR__ . '/includes/header.php';
                     <span class="section-eyebrow">Sứ mệnh</span>
                     <h2 class="h3 fw-bold mb-3">Tạo môi trường học thật, làm thật, kết nối thật</h2>
                     <p class="text-secondary text-flow mb-0">
-                        CIT đồng hành cùng sinh viên yêu công nghệ thông qua workshop, seminar, cuộc thi nội bộ, nghiên cứu khoa học và các hoạt động cộng đồng. Những nội dung này được minh chứng qua album và bài đăng công khai trên fanpage chính thức.
+                        CIT đồng hành cùng sinh viên yêu công nghệ thông qua workshop, seminar, cuộc thi nội bộ, nghiên cứu khoa học và các hoạt động cộng đồng. Qua đó giúp các thành viên tích lũy kinh nghiệm thực tế, phát triển tư duy công nghệ và tự tin mở rộng cơ hội nghề nghiệp.
                     </p>
                 </article>
             </div>
@@ -65,7 +65,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <section class="section-space section-muted position-relative overflow-hidden">
     <div class="container">
-        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+        <div class="text-center mx-auto mb-3" style="max-width: 700px;">
             <div class="d-flex justify-content-center">
                 <span class="section-eyebrow">Kim chỉ nam hoạt động</span>
             </div>
@@ -196,7 +196,7 @@ require_once __DIR__ . '/includes/header.php';
                     <article class="<?= $cardClass ?>" style="border-top: 3px solid var(--club-accent);">
                         <?php if (!empty($leader['image'])): ?>
                             <div class="<?= $avatarClass ?>">
-                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar">
+                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar" loading="lazy" decoding="async">
                             </div>
                         <?php else: ?>
                             <div class="mini-card-icon mx-auto"><i class="bi bi-award-fill"></i></div>
@@ -215,7 +215,7 @@ require_once __DIR__ . '/includes/header.php';
                     <article class="mini-card card-sub-leader h-100 text-center">
                         <?php if (!empty($leader['image'])): ?>
                             <div class="leader-avatar-wrap sub-leader mx-auto mb-3">
-                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar">
+                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar" loading="lazy" decoding="async">
                             </div>
                         <?php else: ?>
                             <div class="mini-card-icon mx-auto" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-person-fill"></i></div>
@@ -260,7 +260,7 @@ require_once __DIR__ . '/includes/header.php';
                     <article class="mini-card h-100">
                         <?php if (!empty($partner['image'])): ?>
                             <div class="partner-logo-wrap mb-3">
-                                <img src="<?= e((string) $partner['image']) ?>" alt="<?= e((string) $partner['title']) ?>" class="partner-logo">
+                                <img src="<?= e((string) $partner['image']) ?>" alt="<?= e((string) $partner['title']) ?>" class="partner-logo" loading="lazy" decoding="async">
                             </div>
                         <?php else: ?>
                             <div class="mini-card-icon"><i class="bi <?= e((string) $partner['icon']) ?>"></i></div>

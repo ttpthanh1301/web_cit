@@ -14,6 +14,48 @@ function asset_attrs(array $attrs): string
     return $pairs ? ' ' . implode(' ', $pairs) : '';
 }
 
+function versioned_asset(string $url): string
+{
+    if ($url === '' || preg_match('#^(?:https?:)?//#', $url) || str_starts_with($url, 'data:')) {
+        return $url;
+    }
+
+    $parts = parse_url($url);
+    $path = isset($parts['path']) ? (string) $parts['path'] : $url;
+    $projectPath = preg_replace('#^(?:\.\./)+#', '', ltrim($path, '/'));
+    $file = __DIR__ . '/../' . $projectPath;
+    if (!is_file($file)) {
+        return $url;
+    }
+
+    return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . filemtime($file);
+}
+
+function write_php_cache(string $file, mixed $value): bool
+{
+    $directory = dirname($file);
+    if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+        return false;
+    }
+
+    $temporary = tempnam($directory, '.cache-');
+    if (!is_string($temporary)) {
+        return false;
+    }
+
+    $contents = '<?php return ' . var_export($value, true) . ';' . PHP_EOL;
+    $written = file_put_contents($temporary, $contents, LOCK_EX) !== false;
+    if ($written) {
+        @chmod($temporary, 0644);
+        $written = @rename($temporary, $file);
+    }
+    if (is_file($temporary)) {
+        @unlink($temporary);
+    }
+
+    return $written;
+}
+
 function render_component(string $component, array $props = []): void
 {
     $component = preg_replace('/[^a-zA-Z0-9_\/\\-]+/', '', $component);

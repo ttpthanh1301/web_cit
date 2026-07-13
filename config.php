@@ -1,18 +1,12 @@
 <?php
 declare(strict_types=1);
 
-// Tối ưu hóa bộ nhớ cho hosting RAM thấp (512MB)
-ini_set('memory_limit', '128M');
-
-// Tự động kiểm tra và quay vòng log lỗi định kỳ nếu vượt quá 5MB
-$logFile = ini_get('error_log');
-if ($logFile && is_file($logFile) && filesize($logFile) > 5 * 1024 * 1024) {
-    $lines = file($logFile);
-    if (is_array($lines)) {
-        $trimmed = array_slice($lines, -1000); // Giữ lại 1000 dòng log cuối cùng
-        file_put_contents($logFile, implode('', $trimmed), LOCK_EX);
-    }
-}
+// Giữ mỗi PHP worker trong giới hạn an toàn cho hosting 512 MB RAM.
+ini_set('memory_limit', '96M');
+ini_set('max_execution_time', '30');
+ini_set('default_socket_timeout', '10');
+ini_set('log_errors', '1');
+ini_set('display_errors', (getenv('APP_ENV') ?: 'production') === 'local' ? '1' : '0');
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 

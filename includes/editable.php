@@ -46,10 +46,7 @@ function editable_contents(): array
         $contents[(string) $row['content_key']] = (string) $row['content_value'];
     }
 
-    if (!is_dir(dirname($cacheFile))) {
-        mkdir(dirname($cacheFile), 0755, true);
-    }
-    file_put_contents($cacheFile, '<?php return ' . var_export($contents, true) . ';' . PHP_EOL, LOCK_EX);
+    write_php_cache($cacheFile, $contents);
 
     return $contents;
 }

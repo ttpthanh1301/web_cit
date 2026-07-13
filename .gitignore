@@ -11,6 +11,7 @@ cache/*
 # Thư mục chứa ảnh admin upload (Logo mới, banner mới...)
 uploads/*
 !uploads/.gitkeep
+!uploads/.htaccess
 
 # Logs lỗi hệ thống
 *.log

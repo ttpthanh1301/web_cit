@@ -12,13 +12,21 @@ function upload_and_compress_image(array $file, string $targetFolder): ?string
         return null;
     }
 
+    $imageInfo = @getimagesize($file['tmp_name']);
+    $mimeType = is_array($imageInfo) ? ($imageInfo['mime'] ?? '') : '';
     $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!in_array($file['type'], $allowedTypes, true)) {
+    if (!is_array($imageInfo) || !in_array($mimeType, $allowedTypes, true)) {
         throw new Exception('Chỉ chấp nhận ảnh dạng JPEG, PNG, WEBP.');
     }
 
     if ($file['size'] > 5 * 1024 * 1024) {
         throw new Exception('Ảnh không được vượt quá 5MB.');
+    }
+
+    $sourceWidth = (int) ($imageInfo[0] ?? 0);
+    $sourceHeight = (int) ($imageInfo[1] ?? 0);
+    if ($sourceWidth < 1 || $sourceHeight < 1 || $sourceWidth * $sourceHeight > 12000000) {
+        throw new Exception('Ảnh không hợp lệ hoặc vượt quá 12 megapixel.');
     }
 
     $filename = uniqid('img_', true) . '.webp';
@@ -29,33 +37,65 @@ function upload_and_compress_image(array $file, string $targetFolder): ?string
     }
 
     $success = false;
-    if (extension_loaded('gd')) {
-        switch ($file['type']) {
-            case 'image/jpeg':
-                $image = @imagecreatefromjpeg($file['tmp_name']);
-                break;
-            case 'image/png':
-                $image = @imagecreatefrompng($file['tmp_name']);
-                break;
-            case 'image/webp':
-                $image = @imagecreatefromwebp($file['tmp_name']);
-                break;
-            default:
-                $image = false;
-        }
+    if (extension_loaded('gd') && function_exists('imagewebp')) {
+        $loader = match ($mimeType) {
+            'image/jpeg' => 'imagecreatefromjpeg',
+            'image/png' => 'imagecreatefrompng',
+            'image/webp' => 'imagecreatefromwebp',
+            default => '',
+        };
+        $image = $loader !== '' && function_exists($loader)
+            ? @$loader($file['tmp_name'])
+            : false;
 
         if ($image !== false) {
-            imagealphablending($image, true);
-            imagesavealpha($image, true);
-            // Nén ảnh chất lượng 80% WebP
-            $success = imagewebp($image, $targetPath, 80);
+            $scale = min(1, 1920 / $sourceWidth, 1440 / $sourceHeight);
+            $targetWidth = max(1, (int) round($sourceWidth * $scale));
+            $targetHeight = max(1, (int) round($sourceHeight * $scale));
+            $outputImage = $image;
+
+            if ($targetWidth !== $sourceWidth || $targetHeight !== $sourceHeight) {
+                $outputImage = imagecreatetruecolor($targetWidth, $targetHeight);
+                if ($outputImage === false) {
+                    imagedestroy($image);
+                    throw new Exception('Không đủ bộ nhớ để xử lý ảnh.');
+                }
+                imagealphablending($outputImage, false);
+                imagesavealpha($outputImage, true);
+                $transparent = imagecolorallocatealpha($outputImage, 0, 0, 0, 127);
+                imagefilledrectangle($outputImage, 0, 0, $targetWidth, $targetHeight, $transparent);
+                imagecopyresampled(
+                    $outputImage,
+                    $image,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $targetWidth,
+                    $targetHeight,
+                    $sourceWidth,
+                    $sourceHeight
+                );
+            }
+
+            $success = imagewebp($outputImage, $targetPath, 78);
+            if ($outputImage !== $image) {
+                imagedestroy($outputImage);
+            }
             imagedestroy($image);
         }
     }
 
     if (!$success) {
         // Fallback nếu máy chủ không hỗ trợ thư viện GD
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        if (is_file($targetPath)) {
+            @unlink($targetPath);
+        }
+        $ext = match ($mimeType) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            default => 'webp',
+        };
         $filename = uniqid('img_', true) . '.' . $ext;
         $targetPath = $targetFolder . '/' . $filename;
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
@@ -64,6 +104,18 @@ function upload_and_compress_image(array $file, string $targetFolder): ?string
     }
 
     return $success ? 'uploads/' . $filename : null;
+}
+
+function remove_replaced_upload(?string $oldPath, string $newPath): void
+{
+    if (!is_string($oldPath) || !str_starts_with($oldPath, 'uploads/') || $oldPath === $newPath) {
+        return;
+    }
+
+    $oldFile = __DIR__ . '/../uploads/' . basename($oldPath);
+    if (is_file($oldFile)) {
+        @unlink($oldFile);
+    }
 }
 
 $errors = [];
@@ -167,10 +219,12 @@ if (is_post()) {
             $uploaded = false;
             $stmt = $pdo->prepare("INSERT INTO `page_contents` (`content_key`, `content_value`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `content_value` = VALUES(`content_value`)");
 
+            $existingImages = editable_contents();
             if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $logoPath = upload_and_compress_image($_FILES['logo_file'], $targetFolder);
                 if ($logoPath) {
                     $stmt->execute(['site_logo', $logoPath]);
+                    remove_replaced_upload($existingImages['site_logo'] ?? null, $logoPath);
                     $uploaded = true;
                 }
             }
@@ -179,6 +233,7 @@ if (is_post()) {
                 $heroPath = upload_and_compress_image($_FILES['hero_file'], $targetFolder);
                 if ($heroPath) {
                     $stmt->execute(['hero_bg', $heroPath]);
+                    remove_replaced_upload($existingImages['hero_bg'] ?? null, $heroPath);
                     $uploaded = true;
                 }
             }

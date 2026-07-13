@@ -61,13 +61,13 @@
     </div>
 </footer>
     <!-- Script defer: không block render trang -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+    <script src="<?= e(versioned_asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')) ?>" defer></script>
 
     <?php foreach ($pageScripts as $script): ?>
-        <script src="<?= e((string) $script) ?>" defer></script>
+        <script src="<?= e(versioned_asset((string) $script)) ?>" defer></script>
     <?php endforeach; ?>
     <?php if (!empty($enableInlineEditing)): ?>
-        <script src="assets/js/editable.min.js" defer></script>
+        <script src="<?= e(versioned_asset('assets/js/editable.min.js')) ?>" defer></script>
     <?php endif; ?>
 </body>
 </html>

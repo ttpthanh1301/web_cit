@@ -12,6 +12,9 @@ if (!empty($_SESSION['admin_id'])) {
 $error = '';
 $flash = get_flash();
 $username = '';
+if (!headers_sent()) {
+    header('Cache-Control: private, no-store');
+}
 
 if (is_post()) {
     verify_csrf();
@@ -46,8 +49,8 @@ if (is_post()) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Đăng nhập quản trị | <?= e(APP_NAME) ?></title>
-    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/admin.min.css">
+    <link href="<?= e(versioned_asset('../assets/vendor/bootstrap/css/bootstrap.min.css')) ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= e(versioned_asset('../assets/css/admin.min.css')) ?>">
 </head>
 <body class="login-page">
 <main class="login-card shadow-lg">

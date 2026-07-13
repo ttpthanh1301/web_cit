@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/header.php';
             </span>
             <h1>Chuyên môn, văn hóa và câu chuyện thành viên</h1>
             <p class="hero-lead mb-0">
-                Những hoạt động được chọn lọc từ fanpage công khai, từ AETERNUM đến HTTT, Birthday With CIT và Teambuilding CIT. Đây là cốt lõi đời sống CLB mà website muốn phản ánh.
+                Những hoạt động được chọn lọc từ fanpage công khai, từ AETERNUM đến Collab, Birthday With CIT và Teambuilding CIT. Đây là cốt lõi đời sống CLB mà website muốn phản ánh.
             </p>
         </div>
     </div>
@@ -52,11 +52,18 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="row g-4">
                 <?php foreach ($group['items'] as $activity): ?>
+                    <?php
+                    $activityThumb = (string) ($activity['thumb'] ?? $activity['image']);
+                    $activityFull = (string) $activity['image'];
+                    $activityWidth = max(480, (int) ($activity['width'] ?? 1000));
+                    ?>
                     <div class="col-md-6 <?= count($group['items']) === 1 ? 'col-lg-6' : 'col-lg-4' ?>">
                         <article class="activity-card activity-card-linked">
                             <a class="activity-card-link" href="<?= e((string) $activity['gallery']) ?>" aria-label="Xem album <?= e((string) $activity['title']) ?>">
                                 <div class="activity-card-img">
-                                    <img src="<?= e((string) $activity['image']) ?>"
+                                    <img src="<?= e($activityThumb) ?>"
+                                         srcset="<?= e($activityThumb) ?> 480w, <?= e($activityFull) ?> <?= $activityWidth ?>w"
+                                         sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 33vw"
                                          alt="<?= e((string) $activity['alt']) ?>"
                                          width="480"
                                          height="360"

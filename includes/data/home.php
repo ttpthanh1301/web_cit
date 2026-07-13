@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-function image_variant(string $fullPath): array
+function image_variant(string $fullPath, int $fullWidth): array
 {
     return [
         'full' => $fullPath,
         'thumb' => str_replace('assets/images/cit/albums/', 'assets/images/cit/thumbs/albums/', $fullPath),
+        'width' => $fullWidth,
     ];
 }
 
@@ -15,7 +16,7 @@ $albums = [
         'cover' => 'assets/images/cit/albums/aeternum-hackerrank.webp',
         'desc' => 'Cuộc thi lập trình AETERNUM HackerRank',
         'photos' => array_map(
-            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/aeternum/aeternum-%02d.webp', $i)),
+            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/aeternum/aeternum-%02d.webp', $i), 843),
             range(1, 14)
         ),
     ],
@@ -24,16 +25,24 @@ $albums = [
         'cover' => 'assets/images/cit/albums/birthday-with-cit.webp',
         'desc' => 'Sinh nhật cùng CLB Công nghệ CIT',
         'photos' => array_map(
-            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/birthday-with-cit/birthday-with-cit-%02d.webp', $i)),
+            static fn (int $i): array => image_variant(
+                sprintf('assets/images/cit/albums/birthday-with-cit/birthday-with-cit-%02d.webp', $i),
+                match ($i) {
+                    1, 2, 3, 4, 5 => 590,
+                    7, 8, 9, 10 => 720,
+                    11 => 640,
+                    default => 843,
+                }
+            ),
             range(1, 12)
         ),
     ],
     'httt' => [
-        'label' => 'HTTT',
+        'label' => 'Collab',
         'cover' => 'assets/images/cit/albums/httt.webp',
         'desc' => 'Colab cùng các CLB và bên liên quan',
         'photos' => array_map(
-            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/httt/httt-%02d.webp', $i)),
+            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/httt/httt-%02d.webp', $i), 843),
             range(1, 6)
         ),
     ],
@@ -42,7 +51,7 @@ $albums = [
         'cover' => 'assets/images/cit/albums/vinh-danh-cit.webp',
         'desc' => 'Hoạt động Teambuilding gắn kết thành viên CIT',
         'photos' => array_map(
-            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/vinh-danh-cit/vinh-danh-cit-%02d.webp', $i)),
+            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/vinh-danh-cit/vinh-danh-cit-%02d.webp', $i), 843),
             range(1, 8)
         ),
     ],
@@ -51,7 +60,7 @@ $albums = [
         'cover' => 'assets/images/cit/tan-cu-nhan-04.webp',
         'desc' => 'Chúc mừng các tân cử nhân CIT',
         'photos' => array_map(
-            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/tan-cu-nhan/tan-cu-nhan-%02d.webp', $i)),
+            static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/tan-cu-nhan/tan-cu-nhan-%02d.webp', $i), 1000),
             range(1, 5)
         ),
     ],
@@ -93,7 +102,7 @@ $achievements = [
     ],
     [
         'icon' => 'bi-code-square',
-        'title' => 'HackerRank nội bộ 2025',
+        'title' => 'HackerRank nội bộ 2026',
         'copy' => 'Cuộc thi thuật toán nội bộ giúp thành viên rèn tư duy lập trình và giải quyết vấn đề.',
         'source' => 'https://www.facebook.com/photo/?fbid=873520835760503&set=pcb.873540535758533',
     ],
@@ -179,22 +188,22 @@ $activities = [
         'loading' => 'lazy',
     ],
     [
-        'image' => 'assets/images/cit/albums/aeternum-hackerrank.webp',
-        'thumb' => 'assets/images/cit/thumbs/albums/aeternum-hackerrank.webp',
-        'width' => 843,
-        'height' => 674,
-        'alt' => 'Cuộc thi thuật toán nội bộ HackerRank 2025',
-        'tag_icon' => 'bi-code-square',
-        'tag' => 'Học thuật',
-        'title' => 'HackerRank 2025',
-        'copy' => 'Recap và công bố kết quả cuộc thi thuật toán nội bộ hướng tới kỷ niệm 2 năm thành lập CIT.',
+        'image' => 'assets/images/cit/albums/club-partner/2nam_cit.jpg',
+        'thumb' => 'assets/images/cit/thumbs/albums/club-partner/2nam_cit.webp',
+        'width' => 2048,
+        'height' => 1365,
+        'alt' => 'Khoảnh khắc tập thể tại lễ kỷ niệm 2 năm thành lập CIT',
+        'tag_icon' => 'bi-calendar-heart',
+        'tag' => 'Kỷ niệm',
+        'title' => 'AETERNUM - Kỷ Niệm 2 Năm CIT',
+        'copy' => 'Khoảnh khắc đáng nhớ đánh dấu hành trình 2 năm phát triển, gắn kết và trưởng thành của đại gia đình CIT.',
         'loading' => 'lazy',
     ],
     [
-        'image' => 'assets/images/cit/albums/httt.webp',
-        'thumb' => 'assets/images/cit/thumbs/albums/httt.webp',
-        'width' => 843,
-        'height' => 707,
+        'image' => 'assets/images/cit/albums/club-partner/lowcode.jpg',
+        'thumb' => 'assets/images/cit/albums/club-partner/lowcode.jpg',
+        'width' => 850,
+        'height' => 850,
         'alt' => 'Hoạt động học thuật Low-code 1C Enterprise',
         'tag_icon' => 'bi-lightning-charge',
         'tag' => 'Low-code',
@@ -203,10 +212,10 @@ $activities = [
         'loading' => 'lazy',
     ],
     [
-        'image' => 'assets/images/cit/albums/vinh-danh-cit.webp',
-        'thumb' => 'assets/images/cit/thumbs/albums/vinh-danh-cit.webp',
-        'width' => 590,
-        'height' => 835,
+        'image' => 'assets/images/cit/albums/nckh/giainhat_tmu.webp',
+        'thumb' => 'assets/images/cit/albums/nckh/giainhat_tmu.webp',
+        'width' => 1080,
+        'height' => 1080,
         'alt' => "Thành viên CIT đạt thành tích TMU's Startup 2025",
         'tag_icon' => 'bi-trophy-fill',
         'tag' => 'Thành tích',
@@ -215,8 +224,8 @@ $activities = [
         'loading' => 'lazy',
     ],
     [
-        'image' => 'assets/images/cit/tan-cu-nhan-04.webp',
-        'thumb' => 'assets/images/cit/thumbs/tan-cu-nhan-04.webp',
+        'image' => 'assets/images/cit/albums/club-partner/nckh.jpg',
+        'thumb' => 'assets/images/cit/albums/club-partner/nckh.jpg',
         'width' => 1108,
         'height' => 1478,
         'alt' => 'Thành viên CIT đạt giải cao NCKH cấp Khoa',
