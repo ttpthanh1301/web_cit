@@ -29,7 +29,7 @@
             element.id = 'emailProgressModal';
             element.tabIndex = -1;
             element.dataset.bsBackdrop = 'static';
-            element.innerHTML = '<div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5">Tiến độ gửi email</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Ẩn tiến độ"></button></div><div class="modal-body"><div class="email-progress-number"><strong data-progress-label>0/0</strong><span>đã xử lý</span></div><div class="progress"><div class="progress-bar" data-progress-bar style="width:0%"></div></div><div class="email-progress-stats"><span class="is-sent">Đã gửi <strong data-progress-sent>0</strong></span><span class="is-failed">Lỗi <strong data-progress-failed>0</strong></span><span class="is-skipped">Bỏ qua <strong data-progress-skipped>0</strong></span></div><div class="email-progress-message" data-progress-message>Đang chuẩn bị...</div></div><div class="modal-footer"><button class="btn btn-primary" type="button" data-bs-dismiss="modal">Đóng</button></div></div></div>';
+            element.innerHTML = '<div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5">Tiến độ gửi email</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Ẩn tiến độ"></button></div><div class="modal-body"><div class="email-progress-number"><strong data-progress-label>0/0</strong><span>đã xử lý</span></div><div class="progress"><div class="progress-bar" data-progress-bar style="width:0%"></div></div><div class="email-progress-stats"><span class="is-sent">Đã gửi <strong data-progress-sent>0</strong></span><span class="is-failed">Lỗi <strong data-progress-failed>0</strong></span><span class="is-skipped">Bỏ qua <strong data-progress-skipped>0</strong></span></div><div class="email-progress-message" data-progress-message>Đang chuẩn bị...</div></div><div class="modal-footer"><button class="btn btn-primary d-none" type="button" data-next-batch><i class="bi bi-send"></i> Gửi nhóm tiếp theo</button><button class="btn btn-light" type="button" data-bs-dismiss="modal">Đóng</button></div></div></div>';
             document.body.appendChild(element);
         }
         return { element, instance: bootstrap.Modal.getOrCreateInstance(element) };
@@ -52,10 +52,13 @@
     };
 
     let activeBatch = 0;
-    const runBatch = async (batchId, initialBatch = null) => {
-        if (activeBatch === batchId) return;
+    const runBatch = async (batchId, initialBatch = null, queuedBatches = []) => {
+        if (activeBatch !== 0 || batchId < 1) return;
         activeBatch = batchId;
         const modal = ensureProgressModal();
+        const nextButton = modal.element.querySelector('[data-next-batch]');
+        nextButton.classList.add('d-none');
+        nextButton.onclick = null;
         modal.instance.show();
         if (initialBatch) updateProgress(modal.element, initialBatch);
         try {
@@ -65,6 +68,16 @@
                 batch = data.batch;
                 updateProgress(modal.element, batch);
                 if (!batch.complete) await new Promise((resolve) => window.setTimeout(resolve, 180));
+            }
+            if (queuedBatches.length > 0) {
+                const nextBatch = queuedBatches[0];
+                const remainingCount = queuedBatches.length;
+                const message = modal.element.querySelector('[data-progress-message]');
+                message.className = 'email-progress-message is-complete';
+                message.textContent = `Nhóm hiện tại đã hoàn tất. Còn ${remainingCount} nhóm đang chờ; nên đợi 10–15 phút trước khi gửi nhóm tiếp theo.`;
+                nextButton.innerHTML = '<i class="bi bi-send"></i> Gửi nhóm tiếp theo';
+                nextButton.classList.remove('d-none');
+                nextButton.onclick = () => runBatch(Number(nextBatch.batch_id), nextBatch, queuedBatches.slice(1));
             }
         } catch (error) {
             const message = modal.element.querySelector('[data-progress-message]');
@@ -176,7 +189,8 @@
                 const cell = checkbox.closest('tr')?.querySelector('[data-status-cell]');
                 if (cell) cell.innerHTML = approved ? '<span class="badge text-bg-success">Đã duyệt</span>' : '<span class="badge text-bg-danger">Từ chối</span>';
             });
-            runBatch(Number(data.batch.batch_id), data.batch);
+            const batches = Array.isArray(data.batches) && data.batches.length > 0 ? data.batches : [data.batch];
+            runBatch(Number(batches[0].batch_id), batches[0], batches.slice(1));
         } catch (error) {
             window.alert(error.message);
         } finally {

@@ -50,6 +50,19 @@ html, body { min-height: 100%; }
 .member-mail-result { width: min(100%, 230px); }
 .member-mail-result span { display: block; margin-bottom: .3rem; color: #64748b; font-size: .7rem; font-weight: 700; }
 .member-mail-actions-main .btn { min-height: 38px; margin-left: auto; white-space: nowrap; }
+.member-mail-limit-note {
+    display: flex;
+    align-items: flex-start;
+    gap: .55rem;
+    padding: .65rem .75rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    color: #1e3a8a;
+    background: #eff6ff;
+    font-size: .76rem;
+    line-height: 1.45;
+}
+.member-mail-limit-note > i { margin-top: .05rem; color: #2563eb; font-size: 1rem; }
 .member-mail-select-all {
     display: flex;
     align-items: center;
