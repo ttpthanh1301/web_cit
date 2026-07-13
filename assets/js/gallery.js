@@ -2,6 +2,66 @@
 (function () {
     'use strict';
 
+    function initGalleryNavigation() {
+        document.addEventListener('click', async e => {
+            const link = e.target.closest('#galleryContent a[href*="album="]');
+            if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                return;
+            }
+
+            const targetUrl = new URL(link.href, window.location.href);
+            if (targetUrl.pathname !== window.location.pathname) {
+                return;
+            }
+
+            e.preventDefault();
+            if (link.classList.contains('active') && !targetUrl.searchParams.has('all')) {
+                return;
+            }
+
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+            const currentContent = document.getElementById('galleryContent');
+            if (!currentContent) {
+                window.location.href = link.href;
+                return;
+            }
+
+            currentContent.setAttribute('aria-busy', 'true');
+            try {
+                const fetchUrl = new URL(targetUrl);
+                fetchUrl.hash = '';
+                const response = await fetch(fetchUrl.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (!response.ok) {
+                    throw new Error('Album request failed');
+                }
+
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const nextContent = doc.getElementById('galleryContent');
+                if (!nextContent) {
+                    throw new Error('Album content missing');
+                }
+
+                currentContent.replaceWith(nextContent);
+                window.history.pushState({}, '', fetchUrl.toString() + '#gallery');
+                window.scrollTo(scrollX, scrollY);
+            } catch (error) {
+                window.location.href = link.href;
+            } finally {
+                document.getElementById('galleryContent')?.removeAttribute('aria-busy');
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            window.location.reload();
+        });
+    }
+
+    initGalleryNavigation();
+
     const overlay = document.getElementById('lightbox');
     const lightImg = document.getElementById('lightboxImg');
     const closeBtn = document.getElementById('lightboxClose');

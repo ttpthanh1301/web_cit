@@ -112,46 +112,7 @@ foreach ($sectionsList as $sec) {
             break;
 
         case 'highlights':
-            ?>
-            <section class="section-space section-muted">
-                <div class="container">
-                    <div class="row align-items-end gy-3 mb-5">
-                        <div class="col-lg-7">
-                            <p class="section-eyebrow">Fanpage CIT Club</p>
-                            <h2 class="display-6 fw-bold mb-0">Điểm nhấn từ fanpage chính thức</h2>
-                        </div>
-                        <div class="col-lg-5">
-                            <p class="text-secondary text-narrow mx-auto mb-0">
-                                
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row g-4">
-                        <div class="col-md-4">
-                            <article class="mini-card h-100">
-                                <div class="mini-card-icon"><i class="bi bi-fire"></i></div>
-                                <h3 class="h5 fw-bold mb-2">AETERNUM</h3>
-                                <p class="text-secondary text-flow mb-0">Khoảnh khắc kỷ niệm 2 năm thành lập và cuộc thi HackerRank nội bộ, thể hiện tinh thần học hỏi và sáng tạo của CIT.</p>
-                            </article>
-                        </div>
-                        <div class="col-md-4">
-                            <article class="mini-card h-100">
-                                <div class="mini-card-icon"><i class="bi bi-mic-fill"></i></div>
-                                <h3 class="h5 fw-bold mb-2">HTTT</h3>
-                                <p class="text-secondary text-flow mb-0">Hội thảo chuyên môn giúp thành viên tiếp cận thực tế ngành và xây dựng kỹ năng cạnh tranh.</p>
-                            </article>
-                        </div>
-                        <div class="col-md-4">
-                            <article class="mini-card h-100">
-                                <div class="mini-card-icon"><i class="bi bi-people-fill"></i></div>
-                                <h3 class="h5 fw-bold mb-2">Vinh danh & Sinh nhật</h3>
-                                <p class="text-secondary text-flow mb-0">Khoảnh khắc gắn kết nội bộ và vinh danh thành viên, tạo niềm tin cộng đồng trong mỗi hoạt động.</p>
-                            </article>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <?php
+            // Section removed per user request
             break;
 
         case 'stats':
@@ -246,33 +207,33 @@ foreach ($sectionsList as $sec) {
 
             <section class="section-space section-muted">
                 <div class="container text-center mb-5">
-                    <p class="section-eyebrow justify-content-center">Bento Grid</p>
-                    <h2 class="display-6 fw-bold mb-2">Đời sống CLB qua các con số</h2>
-                    <p class="text-secondary text-narrow mx-auto mb-0">Những điểm nhấn tiêu biểu được tổng hợp trực tiếp từ chặng đường hoạt động.</p>
+                    <p class="section-eyebrow justify-content-center">Dấu ấn nổi bật</p>
+                    <h2 class="display-6 fw-bold mb-2">Những khoảnh khắc làm nên CIT</h2>
+                    <p class="text-secondary text-narrow mx-auto mb-0">Một vài cột mốc tiêu biểu trong học thuật, sự kiện và đời sống cộng đồng của CLB.</p>
                 </div>
                 <div class="container">
                     <div class="bento-grid">
                         <!-- Card 1 (2x2): Giải Nhất Startup 2025 -->
-                        <div class="bento-card bento-card-2x2">
+                        <div class="bento-card bento-card-2x2 overflow-hidden position-relative">
                             <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);"></div>
-                            <span class="bento-card-badge"><i class="bi bi-award-fill me-1"></i>Thành tích</span>
-                            <div class="bento-card-content">
+                            <span class="bento-card-badge position-relative" style="z-index: 2;"><i class="bi bi-award-fill me-1"></i>Thành tích</span>
+                            <div class="bento-card-media bento-card-media-featured rounded-3 overflow-hidden position-relative">
+                                <img src="assets/images/cit/albums/nckh/giainhat_tmu.webp" alt="Giải Nhất TMU's Startup 2025">
+                            </div>
+                            <div class="bento-card-content bento-card-content-featured position-relative" style="z-index: 2;">
                                 <h3 class="h3 fw-bold mb-2">Giải Nhất TMU's Startup 2025</h3>
-                                <p class="text-secondary mb-3">Thành viên CIT xuất sắc vượt qua các đội thi để giành ngôi vị cao nhất tại cuộc thi khởi nghiệp quy mô trường.</p>
-                                <a class="fw-semibold text-decoration-none mt-auto" href="https://www.facebook.com/photo/?fbid=735563756222879&set=pcb.735563836222871" target="_blank" rel="noopener">
-                                    Xem nguồn fanpage <i class="bi bi-box-arrow-up-right ms-1"></i>
-                                </a>
+                                <p class="text-secondary mb-0">Dấu mốc ghi nhận tinh thần sáng tạo, khả năng làm việc nhóm và bản lĩnh trình bày ý tưởng của thành viên CIT.</p>
                             </div>
                         </div>
 
-                        <!-- Card 2 (1x2): HackerRank nội bộ 2025 -->
-                        <div class="bento-card bento-card-1x2">
+                        <!-- Card 2 (1x1): HackerRank nội bộ 2026 -->
+                        <div class="bento-card bento-card-1x1 bento-card-compact">
                             <div class="bento-card-glow" style="background: radial-gradient(circle, rgba(124, 92, 255, 0.15) 0%, transparent 70%);"></div>
                             <span class="bento-card-badge" style="background: rgba(124, 92, 255, 0.1); color: #7c5cff;"><i class="bi bi-code-slash me-1"></i>Học thuật</span>
-                            <div class="bento-card-content">
-                                <h3 class="h4 fw-bold mb-2">HackerRank 2025</h3>
-                                <p class="text-secondary mb-3">Cuộc thi thuật toán nội bộ kịch tính hướng tới kỷ niệm 2 năm thành lập CLB Công nghệ CIT.</p>
-                                <div class="p-2 rounded bg-opacity-10 bg-dark mb-3 border border-secondary border-opacity-10" style="font-family: monospace; font-size: 0.85rem;">
+                            <div class="bento-card-content bento-card-content-start">
+                                <h3 class="h4 fw-bold mb-2">HackerRank 2026</h3>
+                                <p class="text-secondary mb-3">Sân chơi thuật toán nội bộ giúp thành viên rèn tư duy lập trình và tinh thần thi đấu lành mạnh.</p>
+                                <div class="p-2 rounded bg-opacity-10 bg-dark mb-3 border border-secondary border-opacity-10" style="font-family: monospace; font-size: 0.78rem; line-height: 1.45;">
                                     <span class="text-success">$</span> rank list --top3<br>
                                     <span class="text-muted">1. Nguyễn Tuấn Anh</span><br>
                                     <span class="text-muted">2. Trần Nam Hải</span><br>
@@ -285,23 +246,39 @@ foreach ($sectionsList as $sec) {
                         </div>
 
                         <!-- Card 3 (1x1): Reel nổi bật 25K views -->
-                        <div class="bento-card bento-card-1x1">
+                        <div class="bento-card bento-card-1x1 bento-card-compact">
                             <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
-                            <div class="bento-card-content">
-                                <h3 class="h5 fw-bold mb-1">Reel Nổi Bật</h3>
-                                <p class="text-secondary small mb-2">~25K lượt xem trên fanpage CIT.</p>
+                            <div class="bento-card-content bento-card-content-start">
+                                <h3 class="h5 fw-bold mb-1">Khoảnh khắc lan tỏa</h3>
+                                <p class="text-secondary small mb-2">Video nổi bật đưa hình ảnh CIT đến gần hơn với cộng đồng sinh viên.</p>
                                 <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/1903048183715092/" target="_blank" rel="noopener">
                                     <i class="bi bi-facebook me-1"></i>Xem ngay
                                 </a>
                             </div>
                         </div>
 
+                        <!-- Card 4 (1x1): Luyện thuật toán -->
+                        <div class="bento-card bento-card-1x1 bento-card-compact">
+                            <span class="bento-card-badge" style="background: rgba(124, 92, 255, 0.1); color: #7c5cff;"><i class="bi bi-lightning-charge-fill me-1"></i>Kỹ năng</span>
+                            <div class="bento-card-content bento-card-content-start">
+                                <h3 class="h5 fw-bold mb-1">Luyện thuật toán</h3>
+                                <p class="text-secondary small mb-2">Các buổi luyện đề giúp thành viên làm quen áp lực thời gian, tối ưu lời giải và chia sẻ cách tiếp cận bài toán.</p>
+                                <div class="bento-mini-note">
+                                    <span class="bento-mini-note-icon"><i class="bi bi-check2-circle"></i></span>
+                                    <div>
+                                        <strong>Code sạch hơn mỗi tuần</strong>
+                                        <small>Review lời giải, học từ lỗi sai và cải thiện tốc độ xử lý.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Card 4 (1x1): Reel Khoảnh khắc 5.8K views -->
-                        <div class="bento-card bento-card-1x1">
+                        <div class="bento-card bento-card-1x1 bento-card-compact">
                             <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
-                            <div class="bento-card-content">
-                                <h3 class="h5 fw-bold mb-1">Đời sống CIT</h3>
-                                <p class="text-secondary small mb-2">~5.8K lượt xem hoạt động.</p>
+                            <div class="bento-card-content bento-card-content-start">
+                                <h3 class="h5 fw-bold mb-1">Đời sống CLB</h3>
+                                <p class="text-secondary small mb-2">Những lát cắt gần gũi từ các buổi gặp gỡ, chuẩn bị sự kiện và hoạt động nội bộ.</p>
                                 <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/2039372770790649/" target="_blank" rel="noopener">
                                     <i class="bi bi-facebook me-1"></i>Xem ngay
                                 </a>
@@ -314,11 +291,11 @@ foreach ($sectionsList as $sec) {
                             <span class="bento-card-badge" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;"><i class="bi bi-journal-check me-1"></i>NCKH</span>
                             <div class="bento-card-content d-flex flex-row align-items-center justify-content-between gap-3">
                                 <div>
-                                    <h3 class="h4 fw-bold mb-1">NCKH Cấp Khoa</h3>
-                                    <p class="text-secondary mb-0">Các thành viên CIT xuất sắc đạt giải cao trong nghiên cứu khoa học cấp Khoa.</p>
+                                    <h3 class="h4 fw-bold mb-1">Nghiên cứu khoa học</h3>
+                                    <p class="text-secondary mb-0">CIT khuyến khích thành viên theo đuổi đề tài thực tiễn, rèn tư duy nghiên cứu và năng lực trình bày học thuật.</p>
                                 </div>
                                 <a class="btn btn-club btn-sm px-3 flex-shrink-0" href="https://www.facebook.com/photo/?fbid=850552041390716&set=pcb.850527074726546" target="_blank" rel="noopener">
-                                    Xem nguồn
+                                    Xem thêm
                                 </a>
                             </div>
                         </div>
@@ -328,7 +305,7 @@ foreach ($sectionsList as $sec) {
                             <span class="bento-card-badge" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;"><i class="bi bi-play-btn-fill me-1"></i>Reels</span>
                             <div class="bento-card-content">
                                 <h3 class="h5 fw-bold mb-1">Câu chuyện CIT</h3>
-                                <p class="text-secondary small mb-2">~3.8K lượt xem video truyền cảm hứng.</p>
+                                <p class="text-secondary small mb-2">Những câu chuyện nhỏ giữ lại tinh thần đồng hành, học hỏi và trưởng thành cùng nhau.</p>
                                 <a class="btn btn-outline-glass btn-sm w-100" href="https://www.facebook.com/reel/998861632561849/" target="_blank" rel="noopener">
                                     <i class="bi bi-facebook me-1"></i>Xem ngay
                                 </a>
@@ -339,8 +316,8 @@ foreach ($sectionsList as $sec) {
                         <div class="bento-card bento-card-1x1">
                             <span class="bento-card-badge"><i class="bi bi-globe2 me-1"></i>Sự kiện</span>
                             <div class="bento-card-content">
-                                <h3 class="h5 fw-bold mb-1">Cardano Workshop</h3>
-                                <p class="text-secondary small mb-2">Đồng hành cùng Blockchain Workshop #07 tại TMU.</p>
+                                <h3 class="h5 fw-bold mb-1">Workshop công nghệ</h3>
+                                <p class="text-secondary small mb-2">Không gian kết nối sinh viên với các chủ đề công nghệ mới, từ blockchain đến ứng dụng thực tiễn.</p>
                                 <a class="fw-semibold text-decoration-none mt-auto small" href="https://www.facebook.com/photo/?fbid=789063120872942&set=a.408220595623865" target="_blank" rel="noopener">
                                     Xem thêm <i class="bi bi-arrow-right"></i>
                                 </a>

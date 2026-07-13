@@ -92,6 +92,7 @@ function render_gallery_grid(array $albums, string $activeAlbum): void
     $current = $albums[$activeAlbum];
     $hasMore = !empty($current['has_more']);
     ?>
+    <div id="galleryContent">
     <nav class="album-tabs mb-4" aria-label="Chọn album">
         <ul class="nav gap-2 flex-wrap" id="galleryTabs" role="tablist">
             <?php foreach ($albums as $key => $album): ?>
@@ -142,5 +143,6 @@ function render_gallery_grid(array $albums, string $activeAlbum): void
             </a>
         </div>
     <?php endif; ?>
+    </div>
     <?php
 }

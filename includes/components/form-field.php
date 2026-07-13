@@ -11,27 +11,61 @@ $isRequired = (int) ($field['is_required'] ?? 0) === 1;
 $fieldError = isset($errors[$fieldId]) ? trim((string) $errors[$fieldId]) : '';
 $inputId = 'field-' . $fieldId;
 $hasValidation = $fieldError !== '';
+$fieldTypeClass = preg_replace('/[^a-z0-9_-]+/i', '', $fieldType) ?: 'text';
+$wideTypes = ['textarea', 'radio', 'checkbox'];
+$isChoiceType = in_array($fieldType, ['radio', 'checkbox'], true);
+$columnClass = in_array($fieldType, $wideTypes, true) ? 'col-12' : 'col-md-6';
+$iconMap = [
+    'text' => 'bi-pencil-square',
+    'email' => 'bi-envelope-at',
+    'phone' => 'bi-telephone',
+    'textarea' => 'bi-chat-left-text',
+    'dropdown' => 'bi-menu-button-wide',
+    'radio' => 'bi-record-circle',
+    'checkbox' => 'bi-check2-square',
+];
+$inputType = $fieldType === 'email' ? 'email' : ($fieldType === 'phone' ? 'tel' : 'text');
+$inputMode = $fieldType === 'phone' ? 'tel' : null;
+$autocomplete = match ($fieldType) {
+    'email' => 'email',
+    'phone' => 'tel',
+    default => str_contains(mb_strtolower($fieldLabel), 'họ') || str_contains(mb_strtolower($fieldLabel), 'tên') ? 'name' : null,
+};
+$placeholderMap = [
+    'text' => 'Nhập ' . mb_strtolower($fieldLabel),
+    'email' => 'example@email.com',
+    'phone' => 'Nhập số điện thoại',
+    'textarea' => 'Chia sẻ ngắn gọn câu trả lời của bạn...',
+    'dropdown' => 'Chọn một lựa chọn',
+];
+$placeholder = $placeholderMap[$fieldType] ?? 'Nhập câu trả lời';
+$requiredText = $isRequired ? 'Bắt buộc' : 'Tùy chọn';
 ?>
-<div class="col-12">
-    <div class="mb-3">
-        <label class="form-label" for="<?= e($inputId) ?>">
-            <?= e($fieldLabel) ?><?= $isRequired ? ' <span class="text-danger">*</span>' : '' ?>
-        </label>
+<div class="<?= e($columnClass) ?>">
+    <div class="recruitment-field recruitment-field-<?= e($fieldTypeClass) ?><?= $hasValidation ? ' has-error' : '' ?>">
+        <<?= $isChoiceType ? 'div' : 'label' ?> class="recruitment-field-label" id="<?= e($inputId) ?>-label"<?= $isChoiceType ? '' : ' for="' . e($inputId) . '"' ?>>
+            <span class="recruitment-field-icon"><i class="bi <?= e($iconMap[$fieldType] ?? 'bi-pencil-square') ?>"></i></span>
+            <span class="recruitment-field-title">
+                <span><?= e($fieldLabel) ?><?= $isRequired ? ' <span class="required-mark">*</span>' : '' ?></span>
+                <small><?= e($requiredText) ?></small>
+            </span>
+        </<?= $isChoiceType ? 'div' : 'label' ?>>
 
         <?php if ($fieldType === 'textarea'): ?>
             <textarea
-                class="form-control<?= $hasValidation ? ' is-invalid' : '' ?>"
+                class="form-control recruitment-control<?= $hasValidation ? ' is-invalid' : '' ?>"
                 id="<?= e($inputId) ?>"
                 name="<?= e($fieldName) ?>"
-                rows="5"
+                rows="6"
+                placeholder="<?= e($placeholder) ?>"
                 <?= $isRequired ? 'required' : '' ?>><?= e((string) $fieldValue) ?></textarea>
         <?php elseif ($fieldType === 'dropdown'): ?>
             <select
-                class="form-select<?= $hasValidation ? ' is-invalid' : '' ?>"
+                class="form-select recruitment-control<?= $hasValidation ? ' is-invalid' : '' ?>"
                 id="<?= e($inputId) ?>"
                 name="<?= e($fieldName) ?>"
                 <?= $isRequired ? 'required' : '' ?>>
-                <option value="">Chọn một lựa chọn</option>
+                <option value=""><?= e($placeholder) ?></option>
                 <?php foreach ($fieldOptions as $option): ?>
                     <option value="<?= e($option) ?>" <?= (string) $fieldValue === $option ? 'selected' : '' ?>>
                         <?= e($option) ?>
@@ -39,11 +73,11 @@ $hasValidation = $fieldError !== '';
                 <?php endforeach; ?>
             </select>
         <?php elseif ($fieldType === 'radio'): ?>
-            <div class="mb-0">
+            <div class="choice-list choice-list-radio" role="radiogroup" aria-labelledby="<?= e($inputId) ?>-label">
                 <?php foreach ($fieldOptions as $index => $option):
                     $optionId = $inputId . '-radio-' . $index;
                 ?>
-                    <div class="form-check">
+                    <div class="form-check choice-card">
                         <input
                             class="form-check-input<?= $hasValidation ? ' is-invalid' : '' ?>"
                             type="radio"
@@ -54,6 +88,7 @@ $hasValidation = $fieldError !== '';
                             <?= $isRequired ? 'required' : '' ?>
                         >
                         <label class="form-check-label" for="<?= e($optionId) ?>">
+                            <span class="choice-indicator"></span>
                             <?= e($option) ?>
                         </label>
                     </div>
@@ -68,7 +103,7 @@ $hasValidation = $fieldError !== '';
                 <?php foreach ($fieldOptions as $index => $option):
                     $optionId = $inputId . '-checkbox-' . $index;
                 ?>
-                    <div class="form-check">
+                    <div class="form-check choice-card">
                         <input
                             class="form-check-input<?= $hasValidation ? ' is-invalid' : '' ?>"
                             type="checkbox"
@@ -78,6 +113,7 @@ $hasValidation = $fieldError !== '';
                             <?= in_array($option, $selectedValues, true) ? 'checked' : '' ?>
                         >
                         <label class="form-check-label" for="<?= e($optionId) ?>">
+                            <span class="choice-indicator"></span>
                             <?= e($option) ?>
                         </label>
                     </div>
@@ -85,17 +121,20 @@ $hasValidation = $fieldError !== '';
             </div>
         <?php else: ?>
             <input
-                class="form-control<?= $hasValidation ? ' is-invalid' : '' ?>"
-                type="<?= $fieldType === 'email' ? 'email' : ($fieldType === 'phone' ? 'tel' : 'text') ?>"
+                class="form-control recruitment-control<?= $hasValidation ? ' is-invalid' : '' ?>"
+                type="<?= e($inputType) ?>"
                 id="<?= e($inputId) ?>"
                 name="<?= e($fieldName) ?>"
                 value="<?= e((string) $fieldValue) ?>"
+                placeholder="<?= e($placeholder) ?>"
+                <?= $inputMode ? 'inputmode="' . e($inputMode) . '"' : '' ?>
+                <?= $autocomplete ? 'autocomplete="' . e($autocomplete) . '"' : '' ?>
                 <?= $isRequired ? 'required' : '' ?>
             >
         <?php endif; ?>
 
         <?php if ($fieldError): ?>
-            <div class="invalid-feedback"><?= e($fieldError) ?></div>
+            <div class="invalid-feedback d-block"><?= e($fieldError) ?></div>
         <?php endif; ?>
     </div>
 </div>

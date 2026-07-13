@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/auth-check.php';
+require_once __DIR__ . '/../includes/editable.php';
 
 $errors = [];
 $formData = ['id' => 0, 'field_label' => '', 'field_type' => 'text', 'options' => '', 'is_required' => 0];
@@ -9,6 +10,7 @@ $formData = ['id' => 0, 'field_label' => '', 'field_type' => 'text', 'options' =
 function clear_form_cache(): void
 {
     @unlink(__DIR__ . '/../cache/form-fields.php');
+    editable_cache_clear();
     require_once __DIR__ . '/../includes/page-cache.php';
     page_cache_clear();
 }
@@ -18,7 +20,36 @@ if (is_post()) {
     $action = isset($_POST['action']) && is_string($_POST['action']) ? $_POST['action'] : '';
     $fieldId = filter_input(INPUT_POST, 'field_id', FILTER_VALIDATE_INT) ?: 0;
 
-    if (in_array($action, ['create', 'update'], true)) {
+    if ($action === 'update_form_status') {
+        $formClosed = isset($_POST['recruitment_form_closed']) ? '1' : '0';
+        $closedMessage = isset($_POST['recruitment_closed_message']) && is_string($_POST['recruitment_closed_message'])
+            ? trim($_POST['recruitment_closed_message'])
+            : '';
+
+        if (mb_strlen($closedMessage) > 600) {
+            $errors[] = 'Thông báo đóng form không được vượt quá 600 ký tự.';
+        }
+
+        if (!$errors) {
+            $statement = $pdo->prepare(
+                'INSERT INTO page_contents (content_key, content_value)
+                 VALUES (:content_key, :content_value)
+                 ON DUPLICATE KEY UPDATE content_value = VALUES(content_value)'
+            );
+            $statement->execute([
+                'content_key' => 'recruitment_form_closed',
+                'content_value' => $formClosed,
+            ]);
+            $statement->execute([
+                'content_key' => 'recruitment_closed_message',
+                'content_value' => $closedMessage,
+            ]);
+
+            clear_form_cache();
+            set_flash('success', $formClosed === '1' ? 'Đã đóng form tuyển thành viên.' : 'Đã mở form tuyển thành viên.');
+            redirect('form-builder.php');
+        }
+    } elseif (in_array($action, ['create', 'update'], true)) {
         $label = isset($_POST['field_label']) && is_string($_POST['field_label']) ? trim($_POST['field_label']) : '';
         $type = isset($_POST['field_type']) && is_string($_POST['field_type']) ? $_POST['field_type'] : '';
         $rawOptions = isset($_POST['options']) && is_string($_POST['options']) ? $_POST['options'] : '';
@@ -32,8 +63,11 @@ if (is_post()) {
             $errors[] = 'Loại field không hợp lệ.';
         }
         $choiceType = in_array($type, ['dropdown', 'radio', 'checkbox'], true);
-        $encodedOptions = $choiceType ? encode_field_options($rawOptions) : null;
-        if ($choiceType && field_options($encodedOptions) === []) {
+        $optionValues = $choiceType ? field_options($rawOptions) : [];
+        $encodedOptions = $choiceType && $optionValues !== []
+            ? json_encode($optionValues, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            : null;
+        if ($choiceType && $optionValues === []) {
             $errors[] = 'Field lựa chọn phải có ít nhất một phương án.';
         }
 
@@ -118,12 +152,40 @@ $fields = $pdo->query(
     'SELECT id, field_label, field_name, field_type, options, is_required, sort_order
      FROM form_fields ORDER BY sort_order, id'
 )->fetchAll();
+$contents = editable_contents();
+$isRecruitmentClosed = ($contents['recruitment_form_closed'] ?? '0') === '1';
+$closedMessage = $contents['recruitment_closed_message'] ?? 'CIT hiện đã đóng form tuyển thành viên. Hẹn gặp bạn ở đợt tuyển tiếp theo.';
 $pageTitle = 'Quản lý form';
 $adminScripts = ['../assets/js/admin-form-builder.min.js'];
 require __DIR__ . '/header.php';
 ?>
 <div class="mb-4"><h1 class="h3 fw-bold mb-1">Form Builder</h1><p class="text-secondary mb-0">Cấu hình các câu hỏi hiển thị trên đơn tuyển thành viên.</p></div>
 <?php if ($errors): ?><div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
+<section class="content-card mb-4">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-5">
+            <h2 class="h5 fw-bold mb-2">Trạng thái form tuyển thành viên</h2>
+            <p class="text-secondary mb-0">Đóng form khi hết đợt tuyển để người dùng không gửi thêm đơn mới, nhưng vẫn giữ nguyên cấu hình field.</p>
+        </div>
+        <div class="col-lg-7">
+            <form method="post" action="form-builder.php">
+                <?= csrf_field() ?>
+                <input type="hidden" name="action" value="update_form_status">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="recruitment_form_closed" name="recruitment_form_closed" value="1" <?= $isRecruitmentClosed ? 'checked' : '' ?>>
+                    <label class="form-check-label fw-semibold" for="recruitment_form_closed">
+                        <?= $isRecruitmentClosed ? 'Form đang đóng' : 'Form đang mở' ?>
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="recruitment_closed_message">Thông báo khi đóng form</label>
+                    <textarea class="form-control" id="recruitment_closed_message" name="recruitment_closed_message" rows="3" maxlength="600"><?= e($closedMessage) ?></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Lưu trạng thái form</button>
+            </form>
+        </div>
+    </div>
+</section>
 <div class="row g-4">
     <div class="col-xl-5 order-xl-2">
         <section class="content-card">

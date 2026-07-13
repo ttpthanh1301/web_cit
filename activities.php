@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/header.php';
             </span>
             <h1>Chuyên môn, văn hóa và câu chuyện thành viên</h1>
             <p class="hero-lead mb-0">
-                Những hoạt động được chọn lọc từ fanpage công khai, từ AETERNUM đến HTTT, Birthday With CIT và Vinh danh CIT. Đây là cốt lõi đời sống CLB mà website muốn phản ánh.
+                Những hoạt động được chọn lọc từ fanpage công khai, từ AETERNUM đến HTTT, Birthday With CIT và Teambuilding CIT. Đây là cốt lõi đời sống CLB mà website muốn phản ánh.
             </p>
         </div>
     </div>

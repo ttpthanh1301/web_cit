@@ -37,12 +37,35 @@ function field_options(?string $options): array
     if (str_starts_with($options, '[') || str_starts_with($options, '{')) {
         $decoded = json_decode($options, true);
         if (is_array($decoded)) {
-            return array_values(array_filter(array_map(static fn ($value): string => trim((string) $value), $decoded), static fn ($value): bool => $value !== ''));
+            return normalize_field_options($decoded);
         }
     }
 
     $lines = preg_split('/\r\n|\r|\n/', $options);
-    return array_values(array_filter(array_map(static fn ($line): string => trim((string) $line), $lines), static fn ($line): bool => $line !== ''));
+    return normalize_field_options(is_array($lines) ? $lines : []);
+}
+
+function normalize_field_options(array $options): array
+{
+    $values = [];
+    $seen = [];
+
+    foreach ($options as $option) {
+        $value = trim((string) $option);
+        if ($value === '') {
+            continue;
+        }
+
+        $key = mb_strtolower($value);
+        if (isset($seen[$key])) {
+            continue;
+        }
+
+        $seen[$key] = true;
+        $values[] = $value;
+    }
+
+    return $values;
 }
 
 function encode_field_options(string $options): ?string
@@ -51,7 +74,7 @@ function encode_field_options(string $options): ?string
     return $values === [] ? null : json_encode($values, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 
-function unique_field_name(PDO $pdo, string $label): string
+function unique_field_name(object $pdo, string $label): string
 {
     $base = preg_replace('/[^a-z0-9]+/', '_', strtolower($label));
     $base = trim($base, '_');
@@ -73,6 +96,24 @@ function unique_field_name(PDO $pdo, string $label): string
     } while ($exists);
 
     return $name;
+}
+
+function recruitment_form_closed(): bool
+{
+    require_once __DIR__ . '/editable.php';
+    $contents = editable_contents();
+    return ($contents['recruitment_form_closed'] ?? '0') === '1';
+}
+
+function recruitment_closed_message(): string
+{
+    require_once __DIR__ . '/editable.php';
+    $contents = editable_contents();
+    $message = trim($contents['recruitment_closed_message'] ?? '');
+
+    return $message !== ''
+        ? $message
+        : 'CIT hiện đã đóng form tuyển thành viên. Hẹn gặp bạn ở đợt tuyển tiếp theo.';
 }
 
 if (!function_exists('status_label')) {
@@ -134,4 +175,3 @@ function hex_to_rgb(string $hex): string
     }
     return "{$r}, {$g}, {$b}";
 }
-

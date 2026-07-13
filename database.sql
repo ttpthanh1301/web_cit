@@ -143,7 +143,7 @@ CREATE TABLE `page_contents` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `content_key` (`content_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +152,7 @@ CREATE TABLE `page_contents` (
 
 LOCK TABLES `page_contents` WRITE;
 /*!40000 ALTER TABLE `page_contents` DISABLE KEYS */;
-INSERT INTO `page_contents` VALUES (1,'home_title','Cit','2026-07-10 11:29:34'),(2,'home_desc','Đây là điểm đến trực tuyến của fanpage chính thức CIT, nơi chúng tôi chọn lọc hình ảnh...','2026-07-10 10:03:46'),(3,'home_title_current','CIT Club — Cộng đồng công nghệ sinh viên TMU','2026-07-10 12:57:57'),(4,'home_desc_current','CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại, dưới sự quản lý của Khoa Công nghệ số ứng dụng. Website chọn lọc thông tin công khai từ fanpage để giới thiệu hoạt động, thành tích và hành trình tuyển thành viên của CLB.','2026-07-10 12:57:57'),(5,'theme_primary_color','#3b82f6','2026-07-10 14:43:29'),(6,'theme_secondary_color','#06b6d4','2026-07-10 14:43:29'),(7,'theme_accent_color','#f97316','2026-07-10 14:43:29'),(8,'site_logo','uploads/img_6a51093d92a1c0.73440216.webp','2026-07-10 15:01:17'),(9,'hero_bg','assets/images/cit/cit-cover.webp','2026-07-10 14:43:29'),(10,'hero_cta_text','Xem tuyển thành viên','2026-07-10 14:43:29'),(11,'hero_cta_url','recruitment.php','2026-07-10 14:43:29'),(12,'hero_explore_text','Khám phá fanpage','2026-07-10 14:43:29'),(13,'hero_explore_url','https://www.facebook.com/clbcongnghe.cit','2026-07-10 14:43:29');
+INSERT INTO `page_contents` VALUES (1,'home_title','Cit','2026-07-10 11:29:34'),(2,'home_desc','Đây là điểm đến trực tuyến của fanpage chính thức CIT, nơi chúng tôi chọn lọc hình ảnh...','2026-07-10 10:03:46'),(3,'home_title_current','CIT Club — Cộng đồng công nghệ sinh viên TMU','2026-07-10 12:57:57'),(4,'home_desc_current','CIT là câu lạc bộ về lĩnh vực Công nghệ đầu tiên trực thuộc Đoàn TNCS Hồ Chí Minh Trường Đại học Thương mại, dưới sự quản lý của Khoa Công nghệ số ứng dụng. Website chọn lọc thông tin công khai từ fanpage để giới thiệu hoạt động, thành tích và hành trình tuyển thành viên của CLB.','2026-07-10 12:57:57'),(5,'theme_primary_color','#3b82f6','2026-07-10 14:43:29'),(6,'theme_secondary_color','#06b6d4','2026-07-10 14:43:29'),(7,'theme_accent_color','#f97316','2026-07-10 14:43:29'),(8,'site_logo','uploads/img_6a51093d92a1c0.73440216.webp','2026-07-10 15:01:17'),(9,'hero_bg','assets/images/cit/cit-cover.webp','2026-07-10 14:43:29'),(10,'hero_cta_text','Xem tuyển thành viên','2026-07-10 14:43:29'),(11,'hero_cta_url','recruitment.php','2026-07-10 14:43:29'),(12,'hero_explore_text','Khám phá fanpage','2026-07-10 14:43:29'),(13,'hero_explore_url','https://www.facebook.com/clbcongnghe.cit','2026-07-10 14:43:29'),(16,'recruitment_form_closed','0','2026-07-13 00:00:00'),(17,'recruitment_closed_message','CIT hiện đã đóng form tuyển thành viên. Hẹn gặp bạn ở đợt tuyển tiếp theo.','2026-07-13 00:00:00');
 /*!40000 ALTER TABLE `page_contents` ENABLE KEYS */;
 UNLOCK TABLES;
 

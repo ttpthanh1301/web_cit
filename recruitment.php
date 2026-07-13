@@ -30,6 +30,8 @@ if (is_file($cacheFile)) {
 
 $errors = [];
 $answers = [];
+$isRecruitmentClosed = recruitment_form_closed();
+$closedMessage = recruitment_closed_message();
 
 if (is_post()) {
     require_once __DIR__ . '/includes/db.php';
@@ -39,100 +41,104 @@ if (is_post()) {
     }
 
     verify_csrf();
-    $postedAnswers = isset($_POST['fields']) && is_array($_POST['fields']) ? $_POST['fields'] : [];
+    if ($isRecruitmentClosed) {
+        $errors['form'] = 'Form tuyển thành viên hiện đang đóng.';
+    } else {
+        $postedAnswers = isset($_POST['fields']) && is_array($_POST['fields']) ? $_POST['fields'] : [];
 
-    foreach ($fields as $field) {
-        $fieldId = (int) $field['id'];
-        $fieldType = $field['field_type'];
-        $options = field_options($field['options']);
-        $rawValue = $postedAnswers[$fieldId] ?? '';
+        foreach ($fields as $field) {
+            $fieldId = (int) $field['id'];
+            $fieldType = $field['field_type'];
+            $options = field_options($field['options']);
+            $rawValue = $postedAnswers[$fieldId] ?? '';
 
-        if ($fieldType === 'checkbox') {
-            $selected = is_array($rawValue) ? $rawValue : [];
-            $selected = array_values(array_unique(array_map(
-                static fn ($value): string => trim((string) $value),
-                $selected
-            )));
-            $invalidChoices = array_diff($selected, $options);
+            if ($fieldType === 'checkbox') {
+                $selected = is_array($rawValue) ? $rawValue : [];
+                $selected = array_values(array_unique(array_map(
+                    static fn ($value): string => trim((string) $value),
+                    $selected
+                )));
+                $invalidChoices = array_diff($selected, $options);
 
-            if ($invalidChoices) {
-                $errors[$fieldId] = 'Lựa chọn không hợp lệ.';
-            } elseif ((int) $field['is_required'] === 1 && !$selected) {
-                $errors[$fieldId] = 'Vui lòng chọn ít nhất một lựa chọn.';
-            }
-
-            $answers[$fieldId] = $selected;
-            continue;
-        }
-
-        $value = is_string($rawValue) ? trim($rawValue) : '';
-        $answers[$fieldId] = $value;
-
-        if ((int) $field['is_required'] === 1 && $value === '') {
-            $errors[$fieldId] = 'Trường này là bắt buộc.';
-            continue;
-        }
-
-        if ($value === '') {
-            continue;
-        }
-
-        $maxLength = $fieldType === 'textarea' ? 5000 : 255;
-        if (mb_strlen($value) > $maxLength) {
-            $errors[$fieldId] = "Nội dung không được vượt quá {$maxLength} ký tự.";
-        } elseif ($fieldType === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[$fieldId] = 'Email không đúng định dạng.';
-        } elseif ($fieldType === 'phone') {
-            $digits = preg_replace('/\D+/', '', $value) ?? '';
-            if (!preg_match('/^\+?[0-9\s().-]{9,20}$/', $value) || strlen($digits) < 9 || strlen($digits) > 12) {
-                $errors[$fieldId] = 'Số điện thoại không đúng định dạng.';
-            }
-        } elseif (in_array($fieldType, ['dropdown', 'radio'], true) && !in_array($value, $options, true)) {
-            $errors[$fieldId] = 'Lựa chọn không hợp lệ.';
-        }
-    }
-
-    if (!$fields) {
-        $errors['form'] = 'Form đăng ký chưa được cấu hình.';
-    }
-
-    if (!$errors) {
-        try {
-            $pdo->beginTransaction();
-            $pdo->exec("INSERT INTO form_submissions (submitted_at, status) VALUES (NOW(), 'pending')");
-            $submissionId = (int) $pdo->lastInsertId();
-            $insertValue = $pdo->prepare(
-                'INSERT INTO form_submission_values (submission_id, field_id, value)
-                 VALUES (:submission_id, :field_id, :value)'
-            );
-
-            foreach ($fields as $field) {
-                $fieldId = (int) $field['id'];
-                $answer = $answers[$fieldId] ?? '';
-                $storedValue = $field['field_type'] === 'checkbox'
-                    ? json_encode($answer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                    : (string) $answer;
-
-                if ((int) $field['is_required'] !== 1 && ($storedValue === '' || $storedValue === '[]')) {
-                    continue;
+                if ($invalidChoices) {
+                    $errors[$fieldId] = 'Lựa chọn không hợp lệ.';
+                } elseif ((int) $field['is_required'] === 1 && !$selected) {
+                    $errors[$fieldId] = 'Vui lòng chọn ít nhất một lựa chọn.';
                 }
 
-                $insertValue->execute([
-                    'submission_id' => $submissionId,
-                    'field_id' => $fieldId,
-                    'value' => $storedValue,
-                ]);
+                $answers[$fieldId] = $selected;
+                continue;
             }
 
-            $pdo->commit();
-            unset($answers, $postedAnswers);
-            redirect('recruitment.php?success=1');
-        } catch (Throwable $exception) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
+            $value = is_string($rawValue) ? trim($rawValue) : '';
+            $answers[$fieldId] = $value;
+
+            if ((int) $field['is_required'] === 1 && $value === '') {
+                $errors[$fieldId] = 'Trường này là bắt buộc.';
+                continue;
             }
-            error_log('Recruitment submission failed: ' . $exception->getMessage());
-            $errors['form'] = 'Không thể lưu đăng ký lúc này. Vui lòng thử lại sau.';
+
+            if ($value === '') {
+                continue;
+            }
+
+            $maxLength = $fieldType === 'textarea' ? 5000 : 255;
+            if (mb_strlen($value) > $maxLength) {
+                $errors[$fieldId] = "Nội dung không được vượt quá {$maxLength} ký tự.";
+            } elseif ($fieldType === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $errors[$fieldId] = 'Email không đúng định dạng.';
+            } elseif ($fieldType === 'phone') {
+                $digits = preg_replace('/\D+/', '', $value) ?? '';
+                if (!preg_match('/^\+?[0-9\s().-]{9,20}$/', $value) || strlen($digits) < 9 || strlen($digits) > 12) {
+                    $errors[$fieldId] = 'Số điện thoại không đúng định dạng.';
+                }
+            } elseif (in_array($fieldType, ['dropdown', 'radio'], true) && !in_array($value, $options, true)) {
+                $errors[$fieldId] = 'Lựa chọn không hợp lệ.';
+            }
+        }
+
+        if (!$fields) {
+            $errors['form'] = 'Form đăng ký chưa được cấu hình.';
+        }
+
+        if (!$errors) {
+            try {
+                $pdo->beginTransaction();
+                $pdo->exec("INSERT INTO form_submissions (submitted_at, status) VALUES (NOW(), 'pending')");
+                $submissionId = (int) $pdo->lastInsertId();
+                $insertValue = $pdo->prepare(
+                    'INSERT INTO form_submission_values (submission_id, field_id, value)
+                     VALUES (:submission_id, :field_id, :value)'
+                );
+
+                foreach ($fields as $field) {
+                    $fieldId = (int) $field['id'];
+                    $answer = $answers[$fieldId] ?? '';
+                    $storedValue = $field['field_type'] === 'checkbox'
+                        ? json_encode($answer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                        : (string) $answer;
+
+                    if ((int) $field['is_required'] !== 1 && ($storedValue === '' || $storedValue === '[]')) {
+                        continue;
+                    }
+
+                    $insertValue->execute([
+                        'submission_id' => $submissionId,
+                        'field_id' => $fieldId,
+                        'value' => $storedValue,
+                    ]);
+                }
+
+                $pdo->commit();
+                unset($answers, $postedAnswers);
+                redirect('recruitment.php?success=1');
+            } catch (Throwable $exception) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                error_log('Recruitment submission failed: ' . $exception->getMessage());
+                $errors['form'] = 'Không thể lưu đăng ký lúc này. Vui lòng thử lại sau.';
+            }
         }
     }
 }
@@ -256,13 +262,19 @@ require_once __DIR__ . '/includes/header.php';
                     <p class="text-secondary mb-0">Để lại thông tin ứng tuyển bên dưới; form dùng để ghi nhận sự quan tâm và liên hệ cho đợt tuyển tiếp theo. Các mục có dấu <span class="required-mark">*</span> là bắt buộc.</p>
                 </div>
 
-                <?php if (isset($errors['form'])): ?>
+                <?php if ($isRecruitmentClosed): ?>
+                    <div class="recruitment-closed-notice" role="status">
+                        <div class="mini-card-icon mb-3"><i class="bi bi-pause-circle-fill"></i></div>
+                        <h4 class="h4 fw-bold mb-2">Form tuyển thành viên đang tạm đóng</h4>
+                        <p class="text-secondary text-flow text-flow-lg mb-0"><?= e($closedMessage) ?></p>
+                    </div>
+                <?php elseif (isset($errors['form'])): ?>
                     <div class="alert alert-danger" role="alert"><?= e($errors['form']) ?></div>
                 <?php endif; ?>
 
-                <?php if (!$fields): ?>
+                <?php if (!$isRecruitmentClosed && !$fields): ?>
                     <div class="alert alert-info mb-0">Form đăng ký đang được chuẩn bị. Vui lòng quay lại sau.</div>
-                <?php else: ?>
+                <?php elseif (!$isRecruitmentClosed): ?>
                     <form method="post" action="recruitment.php">
                         <?= csrf_field() ?>
                         <div class="row g-4">

@@ -31,16 +31,16 @@ $albums = [
     'httt' => [
         'label' => 'HTTT',
         'cover' => 'assets/images/cit/albums/httt.webp',
-        'desc' => 'Hội thảo Thông tin Thị trường Lao động',
+        'desc' => 'Colab cùng các CLB và bên liên quan',
         'photos' => array_map(
             static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/httt/httt-%02d.webp', $i)),
-            range(1, 12)
+            range(1, 6)
         ),
     ],
     'vinh-danh' => [
-        'label' => 'Vinh danh CIT',
+        'label' => 'Teambuilding',
         'cover' => 'assets/images/cit/albums/vinh-danh-cit.webp',
-        'desc' => 'Lễ vinh danh thành viên CIT xuất sắc',
+        'desc' => 'Hoạt động Teambuilding gắn kết thành viên CIT',
         'photos' => array_map(
             static fn (int $i): array => image_variant(sprintf('assets/images/cit/albums/vinh-danh-cit/vinh-danh-cit-%02d.webp', $i)),
             range(1, 8)
@@ -83,7 +83,7 @@ $achievements = [
         'icon' => 'bi-trophy-fill',
         'title' => "Giải Nhất TMU's Startup 2025",
         'copy' => 'Thành viên CIT được fanpage chúc mừng vì xuất sắc giành Giải Nhất tại TMU\'s Startup 2025.',
-        'source' => 'https://www.facebook.com/photo/?fbid=735563756222879&set=pcb.735563836222871',
+        'image' => 'assets/images/cit/albums/nckh/giainhat_tmu.webp',
     ],
     [
         'icon' => 'bi-journal-check',
@@ -135,11 +135,11 @@ $activities = [
         'thumb' => 'assets/images/cit/thumbs/albums/httt.webp',
         'width' => 843,
         'height' => 707,
-        'alt' => 'Hội thảo thông tin thị trường lao động',
-        'tag_icon' => 'bi-mic',
-        'tag' => 'Hội thảo',
-        'title' => 'Hội thảo Thị trường Lao động IT',
-        'copy' => 'Chia sẻ xu hướng tuyển dụng ngành CNTT và định hướng nghề nghiệp cho sinh viên.',
+        'alt' => 'Colab cùng các CLB và bên liên quan',
+        'tag_icon' => 'bi-people',
+        'tag' => 'Hợp tác',
+        'title' => 'Colab cùng các CLB và bên liên quan',
+        'copy' => 'Hoạt động giao lưu, hợp tác và phối hợp tổ chức cùng các câu lạc bộ và các bên liên quan.',
         'loading' => 'eager',
     ],
     [
@@ -159,11 +159,11 @@ $activities = [
         'thumb' => 'assets/images/cit/thumbs/albums/vinh-danh-cit.webp',
         'width' => 590,
         'height' => 835,
-        'alt' => 'Vinh danh thành viên CIT xuất sắc',
-        'tag_icon' => 'bi-award',
-        'tag' => 'Vinh danh',
-        'title' => 'Lễ Vinh Danh CIT',
-        'copy' => 'Tôn vinh những thành viên có đóng góp xuất sắc cho CLB và cộng đồng.',
+        'alt' => 'Hoạt động Teambuilding của CIT',
+        'tag_icon' => 'bi-people-fill',
+        'tag' => 'Teambuilding',
+        'title' => 'Teambuilding CIT',
+        'copy' => 'Các hoạt động teambuilding và giao lưu dã ngoại giúp thắt chặt tình đoàn kết giữa các thành viên.',
         'loading' => 'lazy',
     ],
     [

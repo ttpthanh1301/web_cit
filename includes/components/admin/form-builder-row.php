@@ -8,6 +8,15 @@ declare(strict_types=1);
  * @var int $index
  * @var int $totalFields
  */
+$fieldTypeLabels = [
+    'text' => 'Văn bản',
+    'email' => 'Email',
+    'phone' => 'Số điện thoại',
+    'textarea' => 'Đoạn văn',
+    'dropdown' => 'Danh sách thả xuống',
+    'radio' => 'Chọn một',
+    'checkbox' => 'Chọn nhiều',
+];
 ?>
 <tr>
     <td>
@@ -32,7 +41,7 @@ declare(strict_types=1);
         <strong><?= e((string) $field['field_label']) ?></strong>
         <small class="d-block text-secondary"><?= e((string) $field['field_name']) ?></small>
     </td>
-    <td><?= e((string) $field['field_type']) ?></td>
+    <td><?= e($fieldTypeLabels[(string) $field['field_type']] ?? (string) $field['field_type']) ?></td>
     <td>
         <?= (int) $field['is_required']
             ? '<span class="badge text-bg-danger">Có</span>'

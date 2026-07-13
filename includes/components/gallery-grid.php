@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 $current = $albums[$activeAlbum];
 ?>
+<div id="galleryContent">
 <nav class="album-tabs mb-4" aria-label="Chọn album">
     <ul class="nav gap-2 flex-wrap" id="galleryTabs" role="tablist">
         <?php foreach ($albums as $key => $album): ?>
@@ -45,4 +46,5 @@ $current = $albums[$activeAlbum];
         </div>
     </figure>
     <?php endforeach; ?>
+</div>
 </div>

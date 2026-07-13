@@ -63,25 +63,26 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<section class="section-space section-muted">
+<section class="section-space section-muted position-relative overflow-hidden">
     <div class="container">
-        <div class="row align-items-end gy-3 mb-5">
-            <div class="col-lg-7">
-                <p class="section-eyebrow">Giá trị cốt lõi</p>
-                <h2 class="display-6 fw-bold mb-0">Những điều CIT luôn giữ trong mỗi hoạt động</h2>
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+            <div class="d-flex justify-content-center">
+                <span class="section-eyebrow">Kim chỉ nam hoạt động</span>
             </div>
-            <div class="col-lg-5">
-                <p class="text-secondary text-flow text-flow-lg mb-0">
-                    
-                </p>
+            <h2 class="display-6 fw-bold text-center mb-3">4 Giá Trị Cốt Lõi Của CIT</h2>
+            <div class="values-slogan-pill mx-auto mb-3">
+                <span>TRI THỨC • TỬ TẾ • TRÁCH NHIỆM • HỢP TÁC</span>
             </div>
+            <p class="text-secondary text-flow mx-auto mb-0" style="max-width: 650px; text-align: center;">
+                Phương châm hành động xuyên suốt, định hình văn hóa và dẫn dắt mọi thế hệ thành viên CIT trên hành trình chinh phục công nghệ.
+            </p>
         </div>
         <div class="row g-4">
             <?php foreach ($clubValues as $value): ?>
                 <div class="col-md-6 col-lg-3">
-                    <article class="mini-card h-100">
-                        <div class="mini-card-icon"><i class="bi <?= e((string) $value['icon']) ?>"></i></div>
-                        <h3 class="h5 fw-bold mb-2"><?= e((string) $value['title']) ?></h3>
+                    <article class="mini-card core-value-card h-100">
+                        <div class="value-card-icon"><i class="bi <?= e((string) $value['icon']) ?>"></i></div>
+                        <h3 class="h4 fw-bold mb-2"><?= e((string) $value['title']) ?></h3>
                         <p class="text-secondary text-flow mb-0"><?= e((string) $value['copy']) ?></p>
                     </article>
                 </div>
@@ -90,70 +91,76 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<section class="section-space section-muted">
-    <div class="container">
-        <div class="row align-items-end gy-3 mb-5">
-            <div class="col-lg-7">
-                <p class="section-eyebrow">Nguồn fanpage</p>
-                <h2 class="display-6 fw-bold mb-0">Album chính thức của CIT trên Facebook</h2>
+
+<section class="section-space overflow-hidden position-relative">
+    <div class="container-fluid container-xxl">
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+            <div class="d-flex justify-content-center">
+                <span class="section-eyebrow">Hành trình phát triển</span>
             </div>
-            <div class="col-lg-5">
-                <p class="text-secondary text-flow text-flow-lg mb-0">
-                    
-                </p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-fire"></i></div>
-                    <h3 class="h5 fw-bold mb-2">AETERNUM</h3>
-                    <p class="text-secondary text-flow mb-0">Kỉ niệm 2 năm CIT và hành trình hoạt động chuyên môn.</p>
-                </article>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-mic-fill"></i></div>
-                    <h3 class="h5 fw-bold mb-2">HTTT</h3>
-                    <p class="text-secondary text-flow mb-0">Hội thảo chuyên môn về thị trường lao động và kỹ năng nghề nghiệp.</p>
-                </article>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-balloon-heart"></i></div>
-                    <h3 class="h5 fw-bold mb-2">Birthday With CIT</h3>
-                    <p class="text-secondary text-flow mb-0">Sinh nhật ấm áp và hoạt động gắn kết nội bộ.</p>
-                </article>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <article class="mini-card h-100">
-                    <div class="mini-card-icon"><i class="bi bi-award"></i></div>
-                    <h3 class="h5 fw-bold mb-2">Vinh danh CIT</h3>
-                    <p class="text-secondary text-flow mb-0">Tôn vinh đóng góp và truyền cảm hứng kế thừa.</p>
-                </article>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="section-space">
-    <div class="container">
-        <div class="text-center mb-5">
-            <p class="section-eyebrow justify-content-center">Lịch sử</p>
-            <h2 class="display-6 fw-bold">Dấu mốc phát triển</h2>
-            <p class="text-secondary text-narrow mx-auto mb-0">
-                
+            <h2 class="display-6 fw-bold text-center mb-3">Dấu Mốc Lịch Sử CIT</h2>
+            <p class="text-secondary text-flow mx-auto mb-0" style="max-width: 650px; text-align: center;">
+                Từng bước trưởng thành, bứt phá chuyên môn và khẳng định vị thế cộng đồng công nghệ sinh viên hàng đầu TMU.
             </p>
         </div>
-        <div class="timeline-list">
-            <?php foreach ($clubTimeline as $item): ?>
-                <article class="timeline-item">
-                    <span class="timeline-label"><?= e((string) $item['label']) ?></span>
-                    <div>
-                        <h3 class="h5 fw-bold mb-2"><?= e((string) $item['title']) ?></h3>
-                        <p class="text-secondary text-flow mb-0"><?= e((string) $item['copy']) ?></p>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+
+        <!-- Horizontal Roadmap Track (Flows Left to Right) -->
+        <div class="horizontal-roadmap-track">
+            <div class="horizontal-roadmap-container position-relative">
+                <!-- Horizontal SVG Winding Wave Path for Desktop -->
+                <svg class="horizontal-roadmap-svg d-none d-lg-block" viewBox="0 0 1400 300" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-roadmap-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#3b82f6" />
+                            <stop offset="50%" stop-color="#8b5cf6" />
+                            <stop offset="100%" stop-color="#f97316" />
+                        </linearGradient>
+                        <filter id="h-glow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feGaussianBlur stdDeviation="3" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                    </defs>
+                    <path d="M 100 150 
+                             C 200 70, 300 230, 400 150 
+                             C 500 70, 600 230, 700 150 
+                             C 800 70, 900 230, 1000 150 
+                             C 1100 70, 1200 230, 1300 150" 
+                          fill="none" 
+                          stroke="url(#h-roadmap-grad)" 
+                          stroke-width="4.5" 
+                          stroke-dasharray="8 6"
+                          filter="url(#h-glow)" />
+                </svg>
+
+                <div class="horizontal-roadmap-grid">
+                    <?php foreach ($clubTimeline as $index => $item): 
+                        $isOdd = ($index % 2 !== 0);
+                        $stepNum = sprintf("%02d", $index + 1);
+                        $icon = $item['icon'] ?? 'bi-geo-alt-fill';
+                    ?>
+                        <div class="h-roadmap-step <?= $isOdd ? 'step-bottom' : 'step-top' ?>">
+                            <div class="h-roadmap-card-wrap">
+                                <article class="h-roadmap-card mini-card" tabindex="0">
+                                    <div class="h-roadmap-summary">
+                                        <span class="roadmap-badge mb-2">
+                                            <span class="badge-text"><?= e((string) $item['label']) ?></span>
+                                        </span>
+                                        <span class="h-roadmap-title h6 fw-bold mb-0"><?= e((string) $item['title']) ?></span>
+                                    </div>
+                                    <p class="h-roadmap-copy text-secondary text-flow small mb-0">
+                                        <span><?= e((string) $item['copy']) ?></span>
+                                    </p>
+                                </article>
+                            </div>
+
+                            <div class="h-roadmap-marker">
+                                <span class="marker-number"><?= $stepNum ?></span>
+                                <div class="marker-icon"><i class="bi <?= e((string) $icon) ?>"></i></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -167,7 +174,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    Ban điều hành và đại diện các tiểu ban chuyên môn dẫn dắt các hoạt động học thuật, truyền thông và sự kiện của CIT.
+                    Ban điều hành và các tiểu ban phối hợp vận hành hoạt động học thuật, truyền thông, đối ngoại và sự kiện, tạo nền tảng phát triển bền vững cho CIT.
                 </p>
             </div>
         </div>
@@ -177,17 +184,25 @@ require_once __DIR__ . '/includes/header.php';
         $trung_ban = array_slice($clubLeaders, 3);
         ?>
 
-        <h3 class="h4 fw-bold mb-4 text-center">Ban Chủ Nhiệm (Nhiệm kỳ 2025 - 2026)</h3>
-        <div class="row g-4 mb-5 justify-content-center">
-            <?php foreach ($bcn as $leader): ?>
-                <div class="col-md-4">
-                    <article class="mini-card h-100 text-center" style="border-top: 3px solid var(--club-accent);">
-                        <div class="mini-card-icon mx-auto"><i class="bi bi-award-fill"></i></div>
-                        <h4 class="h5 fw-bold mb-1"><?= e((string) $leader['name']) ?></h4>
-                        <p class="text-primary fw-semibold mb-3"><?= e((string) $leader['role']) ?></p>
-                        <a class="fw-semibold text-decoration-none small" href="<?= e((string) $leader['source']) ?>" target="_blank" rel="noopener">
-                            Xem ảnh gốc <i class="bi bi-box-arrow-up-right ms-1"></i>
-                        </a>
+        <h3 class="h4 fw-bold mb-4 text-center">Ban Chủ Nhiệm (Nhiệm kỳ 2026 - 2027)</h3>
+        <div class="row g-4 mb-5 justify-content-center align-items-center">
+            <?php foreach ($bcn as $leader): 
+                $isPresident = ($leader['role'] === 'Chủ nhiệm');
+                $colClass = $isPresident ? 'col-md-5 col-lg-4' : 'col-md-3.5 col-lg-3';
+                $cardClass = $isPresident ? 'mini-card card-president h-100 text-center' : 'mini-card h-100 text-center';
+                $avatarClass = $isPresident ? 'leader-avatar-wrap president-avatar mx-auto mb-3' : 'leader-avatar-wrap mx-auto mb-3';
+            ?>
+                <div class="<?= $colClass ?>">
+                    <article class="<?= $cardClass ?>" style="border-top: 3px solid var(--club-accent);">
+                        <?php if (!empty($leader['image'])): ?>
+                            <div class="<?= $avatarClass ?>">
+                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar">
+                            </div>
+                        <?php else: ?>
+                            <div class="mini-card-icon mx-auto"><i class="bi bi-award-fill"></i></div>
+                        <?php endif; ?>
+                        <h4 class="<?= $isPresident ? 'h4 fw-bold mb-2' : 'h5 fw-bold mb-1' ?>"><?= e((string) $leader['name']) ?></h4>
+                        <p class="text-primary fw-semibold mb-0"><?= e((string) $leader['role']) ?></p>
                     </article>
                 </div>
             <?php endforeach; ?>
@@ -196,22 +211,25 @@ require_once __DIR__ . '/includes/header.php';
         <h3 class="h4 fw-bold mb-4 text-center">Trưởng Các Tiểu Ban</h3>
         <div class="row g-3 mb-5 justify-content-center">
             <?php foreach ($trung_ban as $leader): ?>
-                <div class="col-sm-6 col-md-4 col-lg-2">
-                    <article class="mini-card h-100 text-center">
-                        <div class="mini-card-icon mx-auto" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-person-fill"></i></div>
+                <div class="col-sm-6 col-md-4 col-5-cols">
+                    <article class="mini-card card-sub-leader h-100 text-center">
+                        <?php if (!empty($leader['image'])): ?>
+                            <div class="leader-avatar-wrap sub-leader mx-auto mb-3">
+                                <img src="<?= e((string) $leader['image']) ?>" alt="<?= e((string) $leader['name']) ?>" class="leader-avatar">
+                            </div>
+                        <?php else: ?>
+                            <div class="mini-card-icon mx-auto" style="width: 40px; height: 40px; font-size: 1rem;"><i class="bi bi-person-fill"></i></div>
+                        <?php endif; ?>
                         <h4 class="h6 fw-bold mb-1" style="font-size: 0.9rem;"><?= e((string) $leader['name']) ?></h4>
-                        <p class="text-secondary small mb-3" style="font-size: 0.75rem;"><?= e((string) $leader['role']) ?></p>
-                        <a class="fw-semibold text-decoration-none small" style="font-size: 0.75rem;" href="<?= e((string) $leader['source']) ?>" target="_blank" rel="noopener">
-                            Ảnh nguồn <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
+                        <p class="text-secondary leader-role mb-0"><?= e((string) $leader['role']) ?></p>
                     </article>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             <?php foreach ($clubTeams as $team): ?>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <article class="mini-card h-100">
                         <div class="mini-card-icon"><i class="bi <?= e((string) $team['icon']) ?>"></i></div>
                         <h3 class="h5 fw-bold mb-2"><?= e((string) $team['title']) ?></h3>
@@ -232,7 +250,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="col-lg-5">
                 <p class="text-secondary text-flow text-flow-lg mb-0">
-                    
+                    CIT kết nối cùng nhà trường, khoa chuyên môn và doanh nghiệp công nghệ để mở rộng trải nghiệm học tập, nghiên cứu và định hướng nghề nghiệp cho thành viên.
                 </p>
             </div>
         </div>
@@ -240,7 +258,13 @@ require_once __DIR__ . '/includes/header.php';
             <?php foreach ($clubPartners as $partner): ?>
                 <div class="col-md-6 col-lg-3">
                     <article class="mini-card h-100">
-                        <div class="mini-card-icon"><i class="bi <?= e((string) $partner['icon']) ?>"></i></div>
+                        <?php if (!empty($partner['image'])): ?>
+                            <div class="partner-logo-wrap mb-3">
+                                <img src="<?= e((string) $partner['image']) ?>" alt="<?= e((string) $partner['title']) ?>" class="partner-logo">
+                            </div>
+                        <?php else: ?>
+                            <div class="mini-card-icon"><i class="bi <?= e((string) $partner['icon']) ?>"></i></div>
+                        <?php endif; ?>
                         <h3 class="h5 fw-bold mb-2"><?= e((string) $partner['title']) ?></h3>
                         <p class="text-secondary text-flow mb-0"><?= e((string) $partner['copy']) ?></p>
                     </article>

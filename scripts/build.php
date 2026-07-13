@@ -24,8 +24,8 @@ function minify_js(string $js): string
     // Replace whitespace sequences
     $js = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $js);
     $js = preg_replace('/\s+/', ' ', $js);
-    // Remove space around operators
-    $js = preg_replace('/ ?([=+\-*\/{}();,<>:|&]) ?/', '$1', $js);
+    // Keep spaces around operators. Removing them blindly can corrupt string literals
+    // such as IntersectionObserver rootMargin values: "0px 0px -40px 0px".
     return trim($js);
 }
 
@@ -41,10 +41,12 @@ if (is_file($cssPath)) {
 }
 
 // Minify JS
-$jsPath = $workspace . '/assets/js/editable.js';
-$minJsPath = $workspace . '/assets/js/editable.min.js';
-if (is_file($jsPath)) {
-    $minified = minify_js(file_get_contents($jsPath));
-    file_put_contents($minJsPath, $minified);
-    echo "Minified JS: " . filesize($jsPath) . " bytes -> " . filesize($minJsPath) . " bytes\n";
+foreach (['editable', 'gallery', 'navbar', 'counter', 'admin-form-builder'] as $script) {
+    $jsPath = $workspace . '/assets/js/' . $script . '.js';
+    $minJsPath = $workspace . '/assets/js/' . $script . '.min.js';
+    if (is_file($jsPath)) {
+        $minified = minify_js(file_get_contents($jsPath));
+        file_put_contents($minJsPath, $minified);
+        echo "Minified JS {$script}: " . filesize($jsPath) . " bytes -> " . filesize($minJsPath) . " bytes\n";
+    }
 }
